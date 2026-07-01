@@ -23,7 +23,10 @@ down: ## Stop and remove containers
 destroy: ## Remove containers, local images and volumes (wipes the database!)
 	$(COMPOSE) down --rmi local --volumes --remove-orphans
 
-.PHONY: build start stop down destroy
+bash: ## Open a shell inside the running app container
+	$(COMPOSE) exec app bash
+
+.PHONY: build start stop down destroy bash
 
 ##
 ## ----------------------------------------------------------------------------
