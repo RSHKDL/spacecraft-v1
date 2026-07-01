@@ -1,0 +1,45 @@
+name: spacecraft
+
+services:
+
+  app:
+    container_name: spacecraft-app
+    build:
+      # context = project root (will be used later for COPY in prod)
+      context: .
+      dockerfile: docker/Dockerfile
+      args:
+        UID: ${UID:-1000}
+        GID: ${GID:-1000}
+    restart: unless-stopped
+    environment:
+      # Listen on a non-privileged port (>1024) so FrankenPHP can run as non-root
+      # without any capability. Plain HTTP, no auto TLS cert to deal with in dev.
+      SERVER_NAME: ":8000"
+      DATABASE_URL: "postgresql://spaceboy:spaceboy@database:5432/spacecraft?serverVersion=18&charset=utf8"
+    # http://localhost:8080 (exposé sur localhost uniquement)
+    ports:
+      - "127.0.0.1:8080:8000"
+    # code monté en direct (hot reload en dev)
+    volumes:
+      - .:/app
+    depends_on:
+      - database
+
+  database:
+    container_name: spacecraft-postgres
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: spacecraft
+      POSTGRES_USER: spaceboy
+      POSTGRES_PASSWORD: spaceboy
+    ports:
+      # localhost only + host port 5433 to avoid clashing with another Postgres.
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+# Named volume to persist Postgres data (survives "compose down").
+volumes:
+  db_data:

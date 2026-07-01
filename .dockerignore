@@ -1,0 +1,13 @@
+# Keep heavy/irrelevant paths out of the build context.
+# The Dockerfile copies nothing today, but this speeds up builds and guards
+# a future prod COPY against pulling in vendor/, .git, etc.
+.git
+.gitignore
+.dockerignore
+.idea
+.claude
+/vendor
+/var
+.env.local
+.env.*.local
+*.md
