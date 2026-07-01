@@ -23,10 +23,18 @@ down: ## Stop and remove containers
 destroy: ## Remove containers, local images and volumes (wipes the database!)
 	$(COMPOSE) down --rmi local --volumes --remove-orphans
 
+.PHONY: build start stop down destroy
+
+##
+## ----------------------------------------------------------------------------
+##   Shell access
+## ----------------------------------------------------------------------------
+##
+
 bash: ## Open a shell inside the running app container
 	$(COMPOSE) exec app bash
 
-.PHONY: build start stop down destroy bash
+.PHONY: bash
 
 ##
 ## ----------------------------------------------------------------------------
@@ -38,6 +46,20 @@ install: ## Install PHP dependencies (works even before containers are started)
 	$(COMPOSE) run --rm app composer install
 
 .PHONY: install
+
+##
+## ----------------------------------------------------------------------------
+##   Tests
+## ----------------------------------------------------------------------------
+##
+
+test: ## Execute the test suite
+	$(COMPOSE) exec app vendor/bin/phpunit --testdox
+
+test-watch: ## Execute the test suite in watch mode
+	$(COMPOSE) exec app vendor/bin/phpunit-watcher watch --testdox
+
+.PHONY: test test-watch
 
 ##
 ## ----------------------------------------------------------------------------
