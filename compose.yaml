@@ -5,7 +5,7 @@ services:
   app:
     container_name: spacecraft-app
     build:
-      # context = project root (will be used later for COPY in prod)
+      # context is the project root (will be used later for COPY in prod).
       context: .
       dockerfile: docker/Dockerfile
       args:
@@ -13,13 +13,17 @@ services:
         GID: ${GID:-1000}
     restart: unless-stopped
     environment:
-      # Listen on a non-privileged port (>1024) so FrankenPHP can run as non-root
-      # without any capability. Plain HTTP, no auto TLS cert to deal with in dev.
-      SERVER_NAME: ":8000"
+      # Local dev domains served over HTTPS. Caddy (inside FrankenPHP) issues a
+      # cert for each host from its own local CA (see CADDY_GLOBAL_OPTIONS).
+      SERVER_NAME: "dev.spacecraft.com www.dev.spacecraft.com admin.dev.spacecraft.com"
+      # Use Caddy's internal CA instead of Let's Encrypt.
+      # Caddy also handles HTTP->HTTPS redirect and HSTS automatically.
+      CADDY_GLOBAL_OPTIONS: "local_certs"
       DATABASE_URL: "postgresql://spaceboy:spaceboy@database:5432/spacecraft?serverVersion=18&charset=utf8"
-    # http://localhost:8080 (exposé sur localhost uniquement)
+    # https://dev.spacecraft.com is bound to localhost only (not exposed on LAN).
     ports:
-      - "127.0.0.1:8080:8000"
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:443"
     # code monté en direct (hot reload en dev)
     volumes:
       - .:/app

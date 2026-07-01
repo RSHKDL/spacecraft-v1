@@ -20,6 +20,14 @@ RUN install-php-extensions \
 # Copy the official Composer binary from its dedicated image.
 COPY --from=composer/composer:2-bin /composer /usr/bin/composer
 
+# Grant the FrankenPHP binary the capability to bind privileged ports (80/443)
+# while running as a non-root user. Without this, only root could open <1024.
+# libcap2-bin provides "setcap".
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libcap2-bin \
+    && rm -rf /var/lib/apt/lists/* \
+    && setcap cap_net_bind_service=+ep /usr/local/bin/frankenphp
+
 # Non-root user mapped to the host uid/gid so files created in the /app volume
 # belong to the host user (not root). /data and /config are FrankenPHP/Caddy
 # state directories that must be writable by this user.
