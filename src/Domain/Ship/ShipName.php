@@ -20,7 +20,7 @@ final readonly class ShipName
         $this->value = $value;
     }
 
-    public function value(): ?string
+    public function value(): string
     {
         return $this->value;
     }
