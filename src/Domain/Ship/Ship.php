@@ -10,8 +10,8 @@ final class Ship
     private(set) ?ShipName $name = null;
 
     private function __construct(
-        private ShipId $id,
-        private ShipClass $class,
+        private(set) readonly ShipId $id,
+        private(set) readonly ShipClass $class,
     ) {}
 
     public static function build(ShipId $id, ShipClass $class): self
