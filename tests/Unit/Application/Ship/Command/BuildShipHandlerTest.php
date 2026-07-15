@@ -6,27 +6,23 @@ namespace App\Tests\Unit\Application\Ship\Command;
 
 use App\Application\Ship\Command\BuildShip;
 use App\Application\Ship\Command\BuildShipHandler;
-use App\Domain\Ship\Ship;
 use App\Domain\Ship\ShipClass;
 use App\Domain\Ship\ShipId;
-use App\Domain\Ship\ShipRepository;
+use App\Infrastructure\Ship\InMemoryShipRepository;
 use PHPUnit\Framework\TestCase;
 
 final class BuildShipHandlerTest extends TestCase
 {
     public function testItBuildsAndPersistsAShipOfTheGivenClass(): void
     {
-        $repository = new class implements ShipRepository {
-            public ?Ship $saved = null;
-            public function save(Ship $ship): void { $this->saved = $ship; }
-        };
+        $repository = new InMemoryShipRepository();
 
         $handler = new BuildShipHandler($repository);
         $shipId = ShipId::generate();
 
         $handler(new BuildShip($shipId, ShipClass::Corvette));
 
-        self::assertNotNull($repository->saved);
-        self::assertSame('corvette', $repository->saved?->class->value);
+        self::assertCount(1, $repository->getShips());
+        self::assertSame(ShipClass::Corvette, $repository->getShips()[0]->class);
     }
 }

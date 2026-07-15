@@ -6,7 +6,9 @@ namespace App\Application\Ship\Command;
 
 use App\Domain\Ship\Ship;
 use App\Domain\Ship\ShipRepository;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[AsMessageHandler(bus: 'command.bus')]
 final readonly class BuildShipHandler
 {
     public function __construct(
