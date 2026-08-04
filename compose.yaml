@@ -19,7 +19,8 @@ services:
       # Use Caddy's internal CA instead of Let's Encrypt.
       # Caddy also handles HTTP->HTTPS redirect and HSTS automatically.
       CADDY_GLOBAL_OPTIONS: "local_certs"
-      DATABASE_URL: "postgresql://spaceboy:spaceboy@database:5432/spacecraft?serverVersion=18&charset=utf8"
+      # No DATABASE_URL here on purpose: Symfony builds it from .env/.env.local,
+      # and a real env var (vault-injected in preprod/prod) overrides both.
     # https://dev.spacecraft.com is bound to localhost only (not exposed on LAN).
     ports:
       - "127.0.0.1:80:80"
@@ -32,21 +33,40 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - database
+      # Wait until Postgres actually accepts connections (not just "started"),
+      # otherwise console/migrations can fail with "connection refused" at boot.
+      database:
+        condition: service_healthy
 
   database:
     container_name: spacecraft-postgres
     image: postgres:18
     restart: unless-stopped
+    # POSTGRES_DB / POSTGRES_USER are interpolated from .env, which Compose reads
+    # automatically. POSTGRES_PASSWORD cannot be: Compose never reads .env.local,
+    # so the secret is injected as a file instead. Missing file -> Postgres exits
+    # with an explicit "POSTGRES_PASSWORD must not be empty" error.
+    env_file:
+      - path: .env.local
+        required: false
     environment:
-      POSTGRES_DB: spacecraft
-      POSTGRES_USER: spaceboy
-      POSTGRES_PASSWORD: spaceboy
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
     ports:
       # localhost only + host port 5433 to avoid clashing with another Postgres.
       - "127.0.0.1:5433:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      # Postgres 18+ images expect a single mount on /var/lib/postgresql and
+      # store data in a version-scoped subdir (18/docker), so that pg_upgrade
+      # can work across major versions. Mounting /var/lib/postgresql/data (the
+      # pre-18 layout) makes the entrypoint abort.
+      - db_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
 
 # Named volumes: Postgres data + Caddy state (both survive "compose down").
 volumes:

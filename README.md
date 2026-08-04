@@ -28,17 +28,26 @@ A Sci-fi ship builder.
    echo "127.0.0.1  dev.spacecraft.com www.dev.spacecraft.com admin.dev.spacecraft.com" | sudo tee -a /etc/hosts
    ```
 
-3. **Build & start** the containers:
+3. **Create `.env.local`** at the project root. It is gitignored: no secret is
+   ever committed, not even a dev one. Pick your own password.
+
+   ```dotenv
+   POSTGRES_PASSWORD=choose-your-own
+   DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?serverVersion=18&charset=utf8"
+   APP_SECRET=choose-or-generate-a-value
+   ```
+
+4. **Build & start** the containers:
    ```bash
    make build
    ```
 
-4. **Install** PHP dependencies:
+5. **Install** PHP dependencies:
    ```bash
    make install
    ```
 
-5. **Trust the local TLS CA** (Caddy generates its own). Skip if you accept the
+6. **Trust the local TLS CA** (Caddy generates its own). Skip if you accept the
    browser warning, but the site won't be green.
    ```bash
    # Extract the CA root cert
@@ -49,7 +58,7 @@ A Sci-fi ship builder.
    sudo update-ca-certificates
    ```
 
-6. **Open** https://dev.spacecraft.com
+7. **Open** https://dev.spacecraft.com
 
 ## Everyday commands
 

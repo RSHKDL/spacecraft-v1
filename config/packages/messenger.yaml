@@ -4,7 +4,11 @@ framework:
         # failure_transport: failed
         default_bus: command.bus
         buses:
-            command.bus: ~
+            command.bus:
+                # One command = one transaction. The handler no longer flushes;
+                # the middleware wraps it and rolls back if it throws.
+                middleware:
+                    - doctrine_transaction
             query.bus: ~
 
         transports:
