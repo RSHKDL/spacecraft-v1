@@ -61,6 +61,9 @@ services:
       # can work across major versions. Mounting /var/lib/postgresql/data (the
       # pre-18 layout) makes the entrypoint abort.
       - db_data:/var/lib/postgresql
+      # Runs only on first initialisation of the data directory: creates the
+      # test role and its database (see the script for why).
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s

@@ -25,7 +25,7 @@ final class ShipTest extends TestCase
         $ship = Ship::build(ShipId::generate(), ShipClass::Cruiser);
         $ship->christen(ShipName::create('USS Enterprise'));
 
-        self::assertSame('USS Enterprise', $ship->name->value());
+        self::assertSame('USS Enterprise', $ship->getName()->value());
     }
 
     public function testAShipCannotBeChristenedTwice(): void

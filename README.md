@@ -63,12 +63,35 @@ A Sci-fi ship builder.
 ## Everyday commands
 
 ```bash
-make start        # start without recreating
-make stop         # stop containers
-make down         # stop and remove containers
-make bash         # shell inside the app container
-make test         # run the test suite
-make test-watch   # run tests in watch mode
+make start             # start without recreating
+make stop              # stop containers
+make down              # stop and remove containers
+make bash              # shell inside the app container
+make test              # unit tests only -- no database, instant
+make test-integration  # integration tests -- hits Postgres
+make test-all          # both suites
+make test-watch        # unit tests in watch mode
+make test-db-migrate   # run migrations on the test database
 ```
 
 Run `make help` to list all targets.
+
+## Tests and the test database
+
+Domain tests (value objects, aggregates) are pure unit tests and never touch a
+database. Only the `integration` suite does.
+
+Integration tests run against `spacecraft_test`, owned by a dedicated
+`spacecraft_test` role that has no access to the development database.
+See `docker/postgres/init/setup-test-role.sql`.
+
+The role and database are created when the Postgres data directory is first
+initialized. If you already had a volume before this was added, recreate it:
+
+```bash
+docker compose down
+docker volume rm spacecraft_db_data   # development data is lost
+make start
+docker compose exec app php bin/console doctrine:migrations:migrate --no-interaction
+make test-db-migrate
+```

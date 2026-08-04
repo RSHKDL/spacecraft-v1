@@ -17,9 +17,14 @@
         <server name="SHELL_VERBOSITY" value="-1" />
     </php>
 
+    <!-- Split on purpose: domain tests must stay instant and database-free, so
+         `make test` runs `unit` only. Postgres is reached by `integration`. -->
     <testsuites>
-        <testsuite name="Project Test Suite">
-            <directory>tests</directory>
+        <testsuite name="unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="integration">
+            <directory>tests/Integration</directory>
         </testsuite>
     </testsuites>
 

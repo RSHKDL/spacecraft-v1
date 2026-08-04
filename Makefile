@@ -53,13 +53,22 @@ install: ## Install PHP dependencies (works even before containers are started)
 ## ----------------------------------------------------------------------------
 ##
 
-test: ## Execute the test suite
+test: ## Execute the unit test suite (no database, instant)
+	$(COMPOSE) exec app vendor/bin/phpunit --testsuite unit --testdox
+
+test-integration: ## Execute the integration test suite (hits Postgres)
+	$(COMPOSE) exec app vendor/bin/phpunit --testsuite integration --testdox
+
+test-all: ## Execute every test suite
 	$(COMPOSE) exec app vendor/bin/phpunit --testdox
 
-test-watch: ## Execute the test suite in watch mode
-	$(COMPOSE) exec app vendor/bin/phpunit-watcher watch --testdox
+test-watch: ## Execute the unit test suite in watch mode
+	$(COMPOSE) exec app vendor/bin/phpunit-watcher watch --testsuite unit --testdox
 
-.PHONY: test test-watch
+test-db-migrate: ## Run migrations on the test database
+	$(COMPOSE) exec -e APP_ENV=test app php bin/console doctrine:migrations:migrate --no-interaction
+
+.PHONY: test test-integration test-all test-watch test-db-migrate
 
 ##
 ## ----------------------------------------------------------------------------

@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace App\Domain\Ship;
 
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Embeddable]
 final readonly class ShipHull
 {
     private function __construct(
+        #[ORM\Column]
         private int $current,
+        #[ORM\Column]
         private int $max,
     ) {
         if ($max <= 0) {
