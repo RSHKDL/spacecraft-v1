@@ -16,8 +16,8 @@ final class ShipTest extends TestCase
     {
         $ship = Ship::build(ShipId::generate(), ShipClass::Corvette);
 
-        self::assertSame(100, $ship->hull->current());
-        self::assertSame(100, $ship->hull->max());
+        self::assertSame(100, $ship->hull->getCurrent());
+        self::assertSame(100, $ship->hull->getMax());
     }
 
     public function testAShipCanBeChristenedWithAName(): void

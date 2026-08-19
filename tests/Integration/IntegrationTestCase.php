@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration;
 
+use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
@@ -13,13 +14,16 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
  *
  * Isolation is a manual truncate rather than a transaction-rollback bundle: one
  * less dependency, and nothing hidden. The trade-off is that a test cannot
- * observe what happens across a real commit boundary -- which is precisely what
+ * observe what happens across a real commit boundary, which is precisely what
  * the command bus transaction middleware does, so keep the truncate here.
  */
 abstract class IntegrationTestCase extends KernelTestCase
 {
     protected EntityManagerInterface $entityManager;
 
+    /**
+     * @throws Exception
+     */
     protected function setUp(): void
     {
         self::bootKernel();
@@ -39,7 +43,9 @@ abstract class IntegrationTestCase extends KernelTestCase
     /**
      * Identifiers cannot be bound as query parameters, so the table names are
      * quoted by the platform instead. They come from the mapping, never from
-     * user input -- the only place in this codebase where SQL is assembled.
+     * user input, the only place in this codebase where SQL is assembled.
+     *
+     * @throws Exception
      */
     private function truncateMappedTables(): void
     {

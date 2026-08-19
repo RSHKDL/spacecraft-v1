@@ -34,12 +34,12 @@ final readonly class ShipHull
         }
     }
 
-    public function current(): int
+    public function getCurrent(): int
     {
         return $this->current;
     }
 
-    public function max(): int
+    public function getMax(): int
     {
         return $this->max;
     }
@@ -52,5 +52,18 @@ final readonly class ShipHull
     public static function createNew(int $max): self
     {
         return new self($max, $max);
+    }
+
+    /**
+     * A Ship is considered "destroyed" when its hull value is lower than
+     * 10% of the max value.
+     */
+    public function getStatus(): HullStatus
+    {
+        return match (true) {
+            $this->current === $this->max => HullStatus::Intact,
+            $this->current * 10 < $this->max => HullStatus::Destroyed,
+            default => HullStatus::Damaged,
+        };
     }
 }

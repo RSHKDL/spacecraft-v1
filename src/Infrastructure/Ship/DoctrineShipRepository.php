@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Ship;
 
+use App\Application\Ship\Query\ShipFinder;
+use App\Application\Ship\Query\ShipView;
 use App\Domain\Ship\Ship;
 use App\Domain\Ship\ShipRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Persistent adapter for the ShipRepository port.
+ * Persistent adapter for the ShipRepository and ShipFinder ports.
  *
  * Deliberately does not flush: the `doctrine_transaction` middleware on
  * command.bus opens the transaction, flushes once every handler has run, then
- * commits -- or rolls back if one throws. One command, one transaction.
+ * commits or rolls back if one throws. One command, one transaction.
  */
-final readonly class DoctrineShipRepository implements ShipRepository
+final readonly class DoctrineShipRepository implements ShipRepository, ShipFinder
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
@@ -24,5 +26,16 @@ final readonly class DoctrineShipRepository implements ShipRepository
     public function save(Ship $ship): void
     {
         $this->entityManager->persist($ship);
+    }
+
+    public function findAll(): array
+    {
+        $qb = $this->entityManager->createQueryBuilder()
+            ->select(sprintf('NEW %s(s.id, s.name, s.class, s.hull.current, s.hull.max)', ShipView::class))
+            ->from(Ship::class, 's')
+            ->orderBy('s.id', 'ASC')
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 }

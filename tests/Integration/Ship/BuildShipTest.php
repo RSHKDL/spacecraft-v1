@@ -26,8 +26,8 @@ class BuildShipTest extends IntegrationTestCase
         $expectedShip = Ship::build($shipId, ShipClass::Corvette);
 
         self::assertEquals($expectedShip->class, $ship->class);
-        self::assertEquals($expectedShip->hull->current(), $ship->hull->current());
-        self::assertEquals($expectedShip->hull->max(), $ship->hull->max());
+        self::assertEquals($expectedShip->hull->getCurrent(), $ship->hull->getCurrent());
+        self::assertEquals($expectedShip->hull->getMax(), $ship->hull->getMax());
         self::AssertNull($ship->getName());
     }
 }

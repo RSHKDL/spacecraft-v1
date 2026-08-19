@@ -25,3 +25,15 @@ services:
     # The in-memory adapter stays available for unit tests; the application now
     # runs on the persistent one.
     App\Domain\Ship\ShipRepository: '@App\Infrastructure\Ship\DoctrineShipRepository'
+
+when@test:
+    services:
+        # default configuration for tests.
+        _defaults:
+            autowire: true
+            autoconfigure: true
+
+        # No consumer injects it yet, so the container drops it before the test
+        # locator can expose it. Remove this once the controller wires it in.
+        App\Application\Query\QueryBus:
+            public: true
