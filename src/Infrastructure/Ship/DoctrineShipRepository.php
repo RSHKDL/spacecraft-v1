@@ -7,8 +7,10 @@ namespace App\Infrastructure\Ship;
 use App\Application\Ship\Query\ShipFinder;
 use App\Application\Ship\Query\ShipView;
 use App\Domain\Ship\Ship;
+use App\Domain\Ship\ShipId;
 use App\Domain\Ship\ShipRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * Persistent adapter for the ShipRepository and ShipFinder ports.
@@ -30,12 +32,25 @@ final readonly class DoctrineShipRepository implements ShipRepository, ShipFinde
 
     public function findAll(): array
     {
-        $qb = $this->entityManager->createQueryBuilder()
-            ->select(sprintf('NEW %s(s.id, s.name, s.class, s.hull.current, s.hull.max)', ShipView::class))
-            ->from(Ship::class, 's')
-            ->orderBy('s.id', 'ASC')
-        ;
+        $qb = $this->shipQueryBuilder()->orderBy('s.id', 'ASC');
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findById(ShipId $id): ?ShipView
+    {
+        $qb = $this->shipQueryBuilder()
+            ->andWhere('s.id = :id')
+            ->setParameter('id', $id)
+        ;
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    private function shipQueryBuilder(): QueryBuilder
+    {
+        return $this->entityManager->createQueryBuilder()
+            ->select(sprintf('NEW %s(s.id, s.name, s.class, s.hull.current, s.hull.max)', ShipView::class))
+            ->from(Ship::class, 's');
     }
 }

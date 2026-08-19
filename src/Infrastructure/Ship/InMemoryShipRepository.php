@@ -11,7 +11,7 @@ use App\Domain\Ship\ShipRepository;
  * Volatile adapter for demonstration purpose: state does not survive the request.
  * Can be used in unit test.
  */
-class InMemoryShipRepository implements ShipRepository
+final class InMemoryShipRepository implements ShipRepository
 {
     /** @var list<Ship> */
     private array $ships = [];

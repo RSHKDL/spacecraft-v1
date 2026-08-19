@@ -9,9 +9,15 @@ use App\Domain\Ship\Ship;
 use App\Domain\Ship\ShipClass;
 use App\Domain\Ship\ShipId;
 use App\Tests\Integration\IntegrationTestCase;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
-class BuildShipTest extends IntegrationTestCase
+final class BuildShipTest extends IntegrationTestCase
 {
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
     public function testAShipIsPersisted(): void
     {
         $bus = self::getContainer()->get('command.bus');
