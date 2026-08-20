@@ -6,14 +6,14 @@ namespace App\Domain\Fleet;
 
 use App\Domain\Ship\ShipId;
 
-
 final class Fleet
 {
     private function __construct(
         private(set) readonly FleetId $id,
-        private FleetName $name,
-        private array $shipIds,
-        private ShipId $flagshipId,
+        private readonly FleetName $name,
+        /** @var array<string, ShipId> */
+        private array $shipIds = [],
+        private ?ShipId $flagshipId = null,
     ) {}
 
     /**
@@ -26,28 +26,45 @@ final class Fleet
         ShipId $flagshipId,
     ): self
     {
-        $shipIdsByValue = [];
+        $newFleet = new self($fleetId, $fleetName);
         foreach ($shipIds as $shipId) {
-            $shipIdsByValue[$shipId->getValue()] = $shipId;
+            $newFleet->assign($shipId);
         }
 
-        // This is checked first before because two identical ids collapse into
-        // a single entry, so the next guard would answer "at least two ships" to
-        // a caller that did pass two identical ids. We report the most specific
-        // cause first. Both guards have the same cost 0(1).
-        if (count($shipIdsByValue) !== count($shipIds)) {
-            throw new \DomainException('A fleet cannot enlist the same ship twice');
-        }
-
-        if (count($shipIdsByValue) < 2) {
+        if ($newFleet->countShips() < 2) {
             throw new \DomainException('A fleet must have at least two ships');
         }
 
-        if (!isset($shipIdsByValue[$flagshipId->getValue()])) {
+        $newFleet->promoteToFlagship($flagshipId);
+
+        return $newFleet;
+    }
+
+    public function promoteToFlagship(ShipId $newFlagshipId): void
+    {
+        if (!isset($this->shipIds[$newFlagshipId->getValue()])) {
             throw new \DomainException('The flagship must be part of the fleet');
         }
 
-        return new self($fleetId, $fleetName, $shipIdsByValue, $flagshipId);
+        $this->flagshipId = $newFlagshipId;
+    }
+
+    public function assign(ShipId $shipId): void
+    {
+        if (isset($this->shipIds[$shipId->getValue()])) {
+            throw new \DomainException('A fleet cannot assign the same ship twice');
+        }
+
+        $this->shipIds[$shipId->getValue()] = $shipId;
+    }
+
+    public function detach(ShipId $shipId): void
+    {
+        unset($this->shipIds[$shipId->getValue()]);
+
+        if ($this->flagshipId?->equals($shipId)) {
+            $this->flagshipId = null;
+        }
     }
 
     public function getName(): FleetName
@@ -55,7 +72,7 @@ final class Fleet
         return $this->name;
     }
 
-    public function getFlagshipId(): ShipId
+    public function getFlagshipId(): ?ShipId
     {
         return $this->flagshipId;
     }

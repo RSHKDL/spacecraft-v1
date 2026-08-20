@@ -35,12 +35,28 @@ Three distinct concerns, kept separate:
 | **Fleet** | Aggregate Root | A named group of ships operating under one command. Has its own identity (`FleetId`) and its own lifecycle: a fleet is **formed**, ships are **assigned** and **detached**, and it is eventually **disbanded** — none of which creates or destroys a `Ship`. Holds its members **by identity** (`ShipId[]`), never as `Ship` objects. |
 | **FleetId** | Value Object | The fleet's synthetic identity: a UUIDv7, generated in the domain. Same contract as `ShipId` — the second identifier, hence the one that justifies extracting a shared `Identifier` base. |
 | **FleetName** | Value Object | The fleet's name. Non-empty, length-bounded, trimmed. **Required**, unlike `ShipName`: a fleet is formed *as* something, whereas a ship exists before being christened. |
-| **Flagship** | Role (not an entity) | The ship from which the fleet is commanded. A **designation the fleet holds** (`Fleet.flagshipId`), not a kind of ship — the same vessel is an ordinary member in one fleet and the flagship in another. Invariant: the flagship is always one of the fleet's own ships. |
+| **Flagship** | Role (not an entity) | The ship from which the fleet is commanded. A **designation the fleet holds** (`Fleet.flagshipId`), not a kind of ship — the same vessel is an ordinary member in one fleet and the flagship in another. Invariant: **when a fleet has a flagship, it is one of that fleet's own ships**. A fleet may have none — see *Degraded fleets*. |
 | **FormFleet** | Command (use case) | Bring a fleet into existence. Naval "form up", not a generic create. |
 | **DisbandFleet** | Command (use case) | End a fleet's existence. Its ships survive and return to being unassigned — disbanding a fleet destroys no `Ship`. |
 | **AssignShip** | Command (use case) | Place a ship under a fleet's command. Preferred over "add": it names the order given, not the mutation of a list. |
-| **DetachShip** | Command (use case) | Release a ship from a fleet; the ship persists, unassigned. Deliberately **not** "remove", which would blur two different events — a ship leaving a fleet, and a ship being destroyed. The latter is a consequence, not a command on `Fleet`. |
-| **PromoteToFlagship** | Command (use case) | Designate one of the fleet's ships as its flagship. A ship is promoted *to* the role; the role itself is not promoted. |
+| **DetachShip** | Command (use case) | Release a ship from a fleet; the ship persists, unassigned. Deliberately **not** "remove", which would blur two different events — a ship leaving a fleet, and a ship being destroyed. The latter is a consequence, not a command on `Fleet`. Detaching the **flagship** is allowed: the fleet is left without one rather than promoting a successor behind the user's back. |
+| **PromoteToFlagship** | Command (use case) | Designate one of the fleet's ships as its flagship. A ship is promoted *to* the role; the role itself is not promoted. If the fleet already has a flagship, the promotion **replaces** it and the former flagship stays an ordinary member — this is the real naval act of *shifting the flag*, one atomic order. Refusing it would force detaching an intact ship just to move the flag. |
+
+### Degraded fleets
+
+A fleet has states that are **legal but diminished**. They are surfaced to the
+user, never prevented by the aggregate:
+
+- **No flagship.** The flagship was detached (destroyed, reassigned) and no
+  successor has been designated yet.
+- **Fewer than two ships, down to none.** "At least two ships" is a rule of
+  **formation**, not an invariant of life: a fleet is formed with a real group,
+  but attrition may reduce it to a single ship. A fleet never disbands itself —
+  `DisbandFleet` is a decision, not a consequence.
+
+Modelling these as invariants would mean a fleet vanishing or reshuffling its
+command on its own, behind the user's back. The domain keeps the degraded state
+and the UI names it ("fleet without a flagship", "fleet reduced to one ship").
 
 ### Two ship lists, two questions
 
