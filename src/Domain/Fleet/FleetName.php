@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Ship;
+namespace App\Domain\Fleet;
 
-final readonly class ShipName
+final readonly class FleetName
 {
     private string $value;
 
@@ -14,7 +14,7 @@ final readonly class ShipName
         $value = trim($value);
 
         if ($value === '') {
-            throw new \InvalidArgumentException('A ship name must not be empty.');
+            throw new \InvalidArgumentException('A fleet name must not be empty.');
         }
 
         $this->value = $value;

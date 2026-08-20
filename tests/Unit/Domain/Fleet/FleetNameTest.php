@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Domain\Ship;
+namespace App\Tests\Unit\Domain\Fleet;
 
-use App\Domain\Ship\ShipName;
+use App\Domain\Fleet\FleetName;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-final class ShipNameTest extends TestCase
+final class FleetNameTest extends TestCase
 {
     public function testNormalizesSurroundingWhitespace(): void
     {
-        $name = ShipName::create('     Nostromo    ');
+        $name = FleetName::create('     1st Fleet    ');
 
-        self::assertSame('Nostromo', $name->getValue());
+        self::assertSame('1st Fleet', $name->getValue());
     }
 
     #[DataProvider('nameProvider')]
@@ -22,7 +22,7 @@ final class ShipNameTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        ShipName::create($name);
+        FleetName::create($name);
     }
 
     public static function nameProvider(): iterable

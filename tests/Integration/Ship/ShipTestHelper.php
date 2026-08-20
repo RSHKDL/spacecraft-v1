@@ -6,6 +6,7 @@ namespace App\Tests\Integration\Ship;
 
 use App\Application\Ship\Command\BuildShip;
 use App\Application\Ship\Query\ShipView;
+use App\Domain\Shared\Identifier;
 use App\Domain\Ship\ShipClass;
 use App\Domain\Ship\ShipId;
 
@@ -21,8 +22,9 @@ trait ShipTestHelper
 
     protected static function viewOf(ShipId $shipId, array $views): ShipView
     {
+        /** @var ShipView $view */
         foreach ($views as $view) {
-            if ((string) $view->id === (string) $shipId) {
+            if ($view->id->equals($shipId)) {
                 return $view;
             }
         }

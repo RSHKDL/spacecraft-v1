@@ -41,7 +41,7 @@ final class Ship
             throw new \DomainException('This ship has already been christened.');
         }
 
-        $this->name = $shipName->value();
+        $this->name = $shipName->getValue();
     }
 
     public function getName(): ?ShipName
