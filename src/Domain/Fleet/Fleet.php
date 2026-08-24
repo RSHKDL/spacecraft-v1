@@ -5,16 +5,33 @@ declare(strict_types=1);
 namespace App\Domain\Fleet;
 
 use App\Domain\Ship\ShipId;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Entity]
 final class Fleet
 {
+    /** @var Collection<int, FleetAssignment> $fleetAssignments */
+    #[ORM\OneToMany(
+        targetEntity: FleetAssignment::class,
+        mappedBy: 'fleet',
+        cascade: ['persist'],
+        orphanRemoval: true,
+    )]
+    private Collection $fleetAssignments;
+
     private function __construct(
+        #[ORM\Id]
+        #[ORM\Column(type: 'fleet_id', unique: true)]
         private(set) readonly FleetId $id,
+        #[ORM\Embedded]
         private readonly FleetName $name,
-        /** @var array<string, ShipId> */
-        private array $shipIds = [],
+        #[ORM\Column(type: 'ship_id', nullable: true)]
         private ?ShipId $flagshipId = null,
-    ) {}
+    ) {
+        $this->fleetAssignments = new ArrayCollection();
+    }
 
     /**
      * @param ShipId[] $shipIds
@@ -42,7 +59,7 @@ final class Fleet
 
     public function promoteToFlagship(ShipId $newFlagshipId): void
     {
-        if (!isset($this->shipIds[$newFlagshipId->getValue()])) {
+        if (!$this->findFleetAssignment($newFlagshipId)) {
             throw new \DomainException('The flagship must be part of the fleet');
         }
 
@@ -51,16 +68,17 @@ final class Fleet
 
     public function assign(ShipId $shipId): void
     {
-        if (isset($this->shipIds[$shipId->getValue()])) {
+        if ($this->findFleetAssignment($shipId)) {
             throw new \DomainException('A fleet cannot assign the same ship twice');
         }
 
-        $this->shipIds[$shipId->getValue()] = $shipId;
+        $this->fleetAssignments->add(new FleetAssignment($shipId, $this));
     }
 
     public function detach(ShipId $shipId): void
     {
-        unset($this->shipIds[$shipId->getValue()]);
+        $fleetAssignment = $this->findFleetAssignment($shipId);
+        $this->fleetAssignments->removeElement($fleetAssignment);
 
         if ($this->flagshipId?->equals($shipId)) {
             $this->flagshipId = null;
@@ -82,11 +100,22 @@ final class Fleet
      */
     public function getShipIds(): array
     {
-        return array_values($this->shipIds);
+        return $this->fleetAssignments
+            ->map(static fn (FleetAssignment $fleetAssignment): ShipId => $fleetAssignment->getShipId())
+            ->getValues()
+        ;
     }
 
     public function countShips(): int
     {
-        return count($this->shipIds);
+        return $this->fleetAssignments->count();
+    }
+
+    private function findFleetAssignment(ShipId $shipId): ?FleetAssignment
+    {
+        return $this->fleetAssignments->findFirst(
+            static fn (int|string $key, FleetAssignment $fleetAssignment): bool
+            => $fleetAssignment->getShipId()->equals($shipId),
+        );
     }
 }

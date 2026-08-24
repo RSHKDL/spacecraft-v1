@@ -9,6 +9,7 @@ use App\Application\Ship\Query\ListShips;
 use App\Domain\Ship\HullStatus;
 use App\Domain\Ship\ShipClass;
 use App\Tests\Integration\IntegrationTestCase;
+use App\Tests\Integration\ShipTestHelper;
 
 final class ListShipsTest extends IntegrationTestCase
 {

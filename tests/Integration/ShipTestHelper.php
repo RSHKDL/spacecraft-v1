@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Ship;
+namespace App\Tests\Integration;
 
 use App\Application\Ship\Command\BuildShip;
 use App\Application\Ship\Query\ShipView;
-use App\Domain\Shared\Identifier;
 use App\Domain\Ship\ShipClass;
 use App\Domain\Ship\ShipId;
 

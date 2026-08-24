@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Fleet;
 
+use Doctrine\ORM\Mapping\Column;
+use Doctrine\ORM\Mapping\Embeddable;
+
+#[Embeddable]
 final readonly class FleetName
 {
+    #[Column]
     private string $value;
 
     private function __construct(

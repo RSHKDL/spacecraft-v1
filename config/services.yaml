@@ -23,8 +23,9 @@ services:
     # please note that last definitions always *replace* previous ones
 
     # The in-memory adapter stays available for unit tests; the application now
-    # runs on the persistent one.
+    # runs on the persistent ones.
     App\Domain\Ship\ShipRepository: '@App\Infrastructure\Ship\DoctrineShipRepository'
+    App\Domain\Fleet\FleetRepository: '@App\Infrastructure\Fleet\DoctrineFleetRepository'
 
 when@test:
     services:

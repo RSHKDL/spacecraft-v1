@@ -10,6 +10,7 @@ doctrine:
 
         types:
             ship_id: App\Infrastructure\Ship\Doctrine\ShipIdType
+            fleet_id: App\Infrastructure\Fleet\Doctrine\FleetIdType
 
     orm:
         validate_xml_mapping: true

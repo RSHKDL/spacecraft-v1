@@ -10,6 +10,7 @@ use App\Application\Ship\Query\ShipView;
 use App\Domain\Ship\ShipClass;
 use App\Domain\Ship\ShipId;
 use App\Tests\Integration\IntegrationTestCase;
+use App\Tests\Integration\ShipTestHelper;
 
 final class GetShipTest extends IntegrationTestCase
 {
