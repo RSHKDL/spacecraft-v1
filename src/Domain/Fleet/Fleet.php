@@ -12,6 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 final class Fleet
 {
+    private const int MINIMUM_SHIPS_TO_FORM_A_FLEET = 2;
+
     /** @var Collection<int, FleetAssignment> $fleetAssignments */
     #[ORM\OneToMany(
         targetEntity: FleetAssignment::class,
@@ -48,8 +50,13 @@ final class Fleet
             $newFleet->assign($shipId);
         }
 
-        if ($newFleet->countShips() < 2) {
-            throw new \DomainException('A fleet must have at least two ships');
+        if ($newFleet->countShips() < self::MINIMUM_SHIPS_TO_FORM_A_FLEET) {
+            throw new \DomainException(
+                sprintf(
+                    'A fleet must have at least %d ships',
+                    self::MINIMUM_SHIPS_TO_FORM_A_FLEET,
+                )
+            );
         }
 
         $newFleet->promoteToFlagship($flagshipId);

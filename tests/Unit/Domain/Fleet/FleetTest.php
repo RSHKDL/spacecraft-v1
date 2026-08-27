@@ -31,13 +31,13 @@ final class FleetTest extends TestCase
         self::assertEquals(FleetName::create(self::FLEET_NAME), $fleet->getName());
     }
 
-    public function testANewlyFormedFleetMustHaveAtLeastTwoShips(): void
+    public function testANewlyFormedFleetMustHaveAMinimumOfShips(): void
     {
         $flagshipId = ShipId::generate();
         $shipIds = [$flagshipId];
 
         $this->expectException(\DomainException::class);
-        $this->expectExceptionMessageIs('A fleet must have at least two ships');
+        $this->expectExceptionMessageIs('A fleet must have at least 2 ships');
         self::formFleet($shipIds, $flagshipId);
     }
 
@@ -114,7 +114,7 @@ final class FleetTest extends TestCase
         self::assertNull($fleet->getFlagshipId());
     }
 
-    public function testAFleetCanBeReducedToASingleShip(): void
+    public function testAFleetCanBeReducedToNoShipAtAll(): void
     {
         $flagshipId = ShipId::generate();
         $leavingShipId = ShipId::generate();
@@ -122,8 +122,9 @@ final class FleetTest extends TestCase
 
         $fleet = self::formFleet($shipIds, $flagshipId);
 
+        $fleet->detach(ShipId::fromString($flagshipId->getValue()));
         $fleet->detach(ShipId::fromString($leavingShipId->getValue()));
-        self::assertSame(1, $fleet->countShips());
+        self::assertSame(0, $fleet->countShips());
     }
 
     public function testDetachingAShipOutsideTheFleetIsANoOp(): void
