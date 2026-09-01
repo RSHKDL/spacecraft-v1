@@ -51,12 +51,34 @@ user, never prevented by the aggregate:
   successor has been designated yet.
 - **Fewer than two ships, down to none.** "At least two ships" is a rule of
   **formation**, not an invariant of life: a fleet is formed with a real group,
-  but attrition may reduce it to a single ship. A fleet never disbands itself —
-  `DisbandFleet` is a decision, not a consequence.
+  but attrition may reduce it to a single ship, or to none at all. A fleet never
+  disbands itself — `DisbandFleet` is a decision, not a consequence.
+- **Wrecks still enlisted.** Destroying a ship does not detach it. `Fleet` holds
+  `ShipId`, never `Ship`, so it cannot see a hull at zero — nothing about
+  destruction happens inside the aggregate. A wreck leaves through `DetachShip`,
+  by hand or by a scheduled sweep, never on its own.
 
 Modelling these as invariants would mean a fleet vanishing or reshuffling its
 command on its own, behind the user's back. The domain keeps the degraded state
-and the UI names it ("fleet without a flagship", "fleet reduced to one ship").
+and the UI names it ("fleet without a flagship", "fleet reduced to one ship",
+"fleet down to wrecks").
+
+The word for these states is **not "invalid"**: such a fleet is a perfectly valid
+aggregate — consistent, persistable, reloadable. It is not **operational**.
+Calling it invalid invites the next reader to "repair" the aggregate with a guard
+in `detach()`. What the state gates is mobilisation, not existence.
+
+Two levels answer that question, and they are not interchangeable:
+
+- what `Fleet` can judge **alone** — how many ships are enlisted, whether a
+  flagship is designated;
+- what needs the ships themselves — "the flagship is a wreck", "over half the
+  hulls are critical". The aggregate holds no `HullStatus`, so these belong to a
+  **domain service** receiving the fleet *and* the ships concerned.
+
+Consequence: since wrecks stay enlisted, a count of members is a count of
+*enlisted* ships, never of *usable* ones. No aggregate-level check can mean more
+than that.
 
 ### Two ship lists, two questions
 

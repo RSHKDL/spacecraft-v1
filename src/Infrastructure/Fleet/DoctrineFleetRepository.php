@@ -6,10 +6,13 @@ namespace App\Infrastructure\Fleet;
 
 use App\Domain\Fleet\Fleet;
 use App\Domain\Fleet\FleetAssignment;
+use App\Domain\Fleet\FleetId;
 use App\Domain\Fleet\FleetRepository;
 use App\Domain\Ship\ShipId;
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 
 /**
  * Persistent adapter for the FleetRepository port.
@@ -27,6 +30,20 @@ final readonly class DoctrineFleetRepository implements FleetRepository
     public function save(Fleet $fleet): void
     {
         $this->entityManager->persist($fleet);
+    }
+
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
+    public function get(FleetId $id): Fleet
+    {
+        $fleet = $this->entityManager->find(Fleet::class, $id);
+        if (!$fleet) {
+            throw new \DomainException(sprintf('No fleet with id "%s"', $id->getValue()));
+        }
+
+        return $fleet;
     }
 
     public function findAlreadyAssignedShipIds(array $shipIds): array

@@ -12,9 +12,13 @@ final readonly class ShipAvailability
         private FleetRepository $repository,
     ) {}
 
-    public function ensureUnassigned(array $shipIds): void
+    public function ensureUnassigned(array $shipIds, ?Fleet $fleetToJoin = null): void
     {
-        $assignedShipIds = $this->repository->findAlreadyAssignedShipIds($shipIds);
+        $candidates = null === $fleetToJoin
+            ? $shipIds
+            : array_filter($shipIds, static fn (ShipId $shipId): bool => !$fleetToJoin->hasShip($shipId));
+
+        $assignedShipIds = $this->repository->findAlreadyAssignedShipIds($candidates);
 
         if ([] !== $assignedShipIds) {
             throw new \DomainException(sprintf(

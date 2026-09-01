@@ -9,6 +9,7 @@ use App\Domain\Ship\ShipId;
 interface FleetRepository
 {
     public function save(Fleet $fleet): void;
+    public function get(FleetId $id): Fleet;
 
     /**
      * @param ShipId[] $shipIds

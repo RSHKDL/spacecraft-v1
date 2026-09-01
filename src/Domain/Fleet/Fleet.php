@@ -113,6 +113,11 @@ final class Fleet
         ;
     }
 
+    public function hasShip(ShipId $shipId): bool
+    {
+        return null !== $this->findFleetAssignment($shipId);
+    }
+
     public function countShips(): int
     {
         return $this->fleetAssignments->count();
