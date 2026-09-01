@@ -32,6 +32,11 @@ final readonly class DoctrineFleetRepository implements FleetRepository
         $this->entityManager->persist($fleet);
     }
 
+    public function remove(Fleet $fleet): void
+    {
+        $this->entityManager->remove($fleet);
+    }
+
     /**
      * @throws OptimisticLockException
      * @throws ORMException
