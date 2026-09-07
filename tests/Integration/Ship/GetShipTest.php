@@ -36,10 +36,8 @@ final class GetShipTest extends IntegrationTestCase
 
     public function testQueryingAnUnknownShipIsNotAnError(): void
     {
-        $shipId = ShipId::generate();
-
         $queryBus = self::getContainer()->get(QueryBus::class);
-        $ship = $queryBus->ask(new GetShip($shipId));
+        $ship = $queryBus->ask(new GetShip(ShipId::generate()));
 
         self::assertNull($ship);
     }
