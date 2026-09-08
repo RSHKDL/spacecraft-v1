@@ -1,0 +1,50 @@
+{
+    "01a0813b-1e6a-7248-a375-8a105daf2220": {
+        "name": "Discovery One",
+        "class": "frigate"
+    },
+    "01a08145-db3d-7259-9231-f8d7105e740a": {
+        "name": "Galactica",
+        "class": "battleship"
+    },
+    "01a08146-03b4-741c-9e8e-30ca7b4e0ff9": {
+        "name": "Pegasus",
+        "class": "battleship"
+    },
+    "01a08146-265d-7016-b699-0bbd94070e6f": {
+        "name": "Normandy SR-1",
+        "class": "frigate"
+    },
+    "01a08146-4733-71d2-b9ea-3e36355f1743": {
+        "name": "Normandy SR-2",
+        "class": "frigate"
+    },
+    "01a08146-690c-7428-a063-e1a253054672": {
+        "name": "Endurance",
+        "class": "corvette"
+    },
+    "01a08146-987a-738e-b433-218680775d84": {
+        "name": "Rocinante",
+        "class": "frigate"
+    },
+    "01a08146-bbe2-76df-b6fb-96f6a595b88f": {
+        "name": "USS Enterprise",
+        "class": "cruiser"
+    },
+    "01a08146-db62-73e5-b6ba-385907b789f8": {
+        "name": "USS Voyager",
+        "class": "cruiser"
+    },
+    "01a08146-fc32-760d-996d-3e7d01913a63": {
+        "name": "Rodger Young",
+        "class": "corvette"
+    },
+    "01a08147-1852-77cb-b933-ee573432719f": {
+        "name": "Red Dwarf",
+        "class": "destroyer"
+    },
+    "01a0816d-8a15-72a2-b2c1-4de481655464": {
+        "name": "Red Dwarf",
+        "class": "corvette"
+    }
+}

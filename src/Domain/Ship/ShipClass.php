@@ -8,6 +8,7 @@ enum ShipClass: string
 {
     case Corvette = 'corvette';
     case Destroyer = 'destroyer';
+    case Frigate = 'frigate';
     case Cruiser = 'cruiser';
     case Battleship = 'battleship';
 
@@ -16,6 +17,7 @@ enum ShipClass: string
         return match ($this) {
             self::Corvette => 100,
             self::Destroyer => 300,
+            self::Frigate => 400,
             self::Cruiser => 600,
             self::Battleship => 1200,
         };
