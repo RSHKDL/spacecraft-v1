@@ -10,6 +10,8 @@ use App\Domain\Ship\Ship;
 use App\Domain\Ship\ShipId;
 use App\Domain\Ship\ShipRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Exception\ORMException;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -28,6 +30,20 @@ final readonly class DoctrineShipRepository implements ShipRepository, ShipFinde
     public function save(Ship $ship): void
     {
         $this->entityManager->persist($ship);
+    }
+
+    /**
+     * @throws OptimisticLockException
+     * @throws ORMException
+     */
+    public function get(ShipId $id): Ship
+    {
+        $ship = $this->entityManager->find(Ship::class, $id);
+        if (!$ship) {
+            throw new \DomainException(sprintf('No ship with id "%s"', $id->getValue()));
+        }
+
+        return $ship;
     }
 
     public function findAll(): array

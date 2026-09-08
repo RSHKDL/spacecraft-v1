@@ -43,8 +43,8 @@ final readonly class DoctrineFleetRepository implements FleetRepository, FleetFi
     }
 
     /**
-     * @throws ORMException
      * @throws OptimisticLockException
+     * @throws ORMException
      */
     public function get(FleetId $id): Fleet
     {
