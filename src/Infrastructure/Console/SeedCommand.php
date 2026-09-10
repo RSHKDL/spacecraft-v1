@@ -125,10 +125,12 @@ final readonly class SeedCommand
             // Value objects are built here, at the boundary: a typo in the JSON
             // is rejected before any command reaches the domain.
             $shipClass = ShipClass::from($data['class']);
-            $shipName = ShipName::create($data['name']);
 
             $this->commandBus->dispatch(new BuildShip($shipId, $shipClass));
-            $this->commandBus->dispatch(new ChristenShip($shipId, $shipName));
+
+            if (isset($data['name'])) {
+                $this->commandBus->dispatch(new ChristenShip($shipId, ShipName::create($data['name'])));
+            }
 
             $shipIds[$shipId->getValue()] = $shipId;
         }

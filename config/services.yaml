@@ -33,8 +33,3 @@ when@test:
         _defaults:
             autowire: true
             autoconfigure: true
-
-        # No consumer injects it yet, so the container drops it before the test
-        # locator can expose it. Remove this once the controller wires it in.
-        App\Application\Query\QueryBus:
-            public: true
