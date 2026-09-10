@@ -6,25 +6,39 @@
 
 {% block body %}
     <article>
-        <h1>{{ 'ship.list.title'|trans }}</h1>
-        <table>
+        <h1 class="mb-4">{{ 'ship.list.title'|trans }}</h1>
+        <table class="table">
             <thead>
-            <tr>
-                <th>{{ 'ship.list.label_name'|trans }}</th>
-                <th>{{ 'ship.list.label_class'|trans }}</th>
-                <th>{{ 'ship.list.label_hull_status'|trans }}</th>
-            </tr>
+                <tr>
+                    <th scope="col">{{ 'ship.list.label_name'|trans }}</th>
+                    <th scope="col">{{ 'ship.list.label_class'|trans }}</th>
+                    <th scope="col">{{ 'ship.list.label_hull_status'|trans }}</th>
+                </tr>
             </thead>
             <tbody>
                 {% for ship in ships %}
                     <tr>
-                        <td>{{ ship.name|default('—') }}</td>
-                        <td>{{ ship.class.value }}</td>
-                        <td class="hull--{{ ship.hullStatus.value }}">{{ ('ship.hull_status.'~ship.hullStatus.value)|trans }}</td>
+                        <th scope="row">
+                            {% if ship.name is not null %}
+                                {{ ship.name }}
+                            {% else %}
+                                <span class="text-body-secondary fst-italic">{{ 'ship.not_christened'|trans }}</span>
+                            {% endif %}
+                        </th>
+
+                        <td>
+                            {{ ('ship.class.'~ship.class.value)|trans }}
+                        </td>
+                        <td>
+                            {% set hullVariant = {"intact": "success", "damaged": "warning", "destroyed": "danger"} %}
+                            <span class="badge text-bg-{{ hullVariant[ship.hullStatus.value] }}">{{ ('ship.hull_status.'~ship.hullStatus.value)|trans }}</span>
+                        </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="3">{{ 'ship.list.empty'|trans }}</td>
+                        <td colspan="3" class="text-center text-body-secondary">
+                            {{ 'ship.list.empty'|trans }}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
