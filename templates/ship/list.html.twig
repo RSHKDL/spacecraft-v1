@@ -16,6 +16,7 @@
                 </tr>
             </thead>
             <tbody>
+                {% set hullVariant = {"intact": "success", "damaged": "warning", "destroyed": "danger"} %}
                 {% for ship in ships %}
                     <tr>
                         <th scope="row">
@@ -30,7 +31,6 @@
                             {{ ('ship.class.'~ship.class.value)|trans }}
                         </td>
                         <td>
-                            {% set hullVariant = {"intact": "success", "damaged": "warning", "destroyed": "danger"} %}
                             <span class="badge text-bg-{{ hullVariant[ship.hullStatus.value] }}">{{ ('ship.hull_status.'~ship.hullStatus.value)|trans }}</span>
                         </td>
                     </tr>

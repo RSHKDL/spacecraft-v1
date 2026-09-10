@@ -1,0 +1,18 @@
+ship:
+    list:
+        title: All ships
+        label_name: Name
+        label_class: Class
+        label_hull_status: Hull status
+        empty: No ships
+    hull_status:
+        intact: Intact
+        damaged: Damaged
+        destroyed: Destroyed
+    class:
+        destroyer: Destroyer
+        corvette: Corvette
+        frigate: Frigate
+        cruiser: Cruiser
+        battleship: Battleship
+    not_christened: Ship not christened
