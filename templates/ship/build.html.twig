@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'ship.build.title'|trans }}
+{% endblock title %}
+
+{% block body %}
+    <article>
+        <h1 class="mb-4">{{ 'ship.build.title'|trans }}</h1>
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}} ) }}
+            {{ form_errors(form) }}
+            {{ form_row(form.shipClass) }}
+            <button type="submit" class="btn btn-primary">{{ 'form.action_submit'|trans }}</button>
+        {{ form_end(form) }}
+    </article>
+{% endblock body %}

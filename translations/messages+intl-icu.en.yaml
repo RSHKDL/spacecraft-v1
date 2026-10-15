@@ -1,3 +1,7 @@
+form:
+    action_submit: Submit
+    select_placeholder: Please choose an option.
+
 ship:
     list:
         title: All ships
@@ -5,6 +9,10 @@ ship:
         label_class: Class
         label_hull_status: Hull status
         empty: No ships
+    build:
+        title: Build a new ship
+        label_class: Ship class
+        success: Ship built successfully
     hull_status:
         intact: Intact
         damaged: Damaged
