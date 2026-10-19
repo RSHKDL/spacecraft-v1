@@ -10,6 +10,7 @@
         "doctrine/doctrine-bundle": "^3.3",
         "doctrine/doctrine-migrations-bundle": "^4.0",
         "doctrine/orm": "^3.6",
+        "symfony/asset": "8.1.*",
         "symfony/asset-mapper": "8.1.*",
         "symfony/console": "8.1.*",
         "symfony/dotenv": "8.1.*",
@@ -25,7 +26,9 @@
         "symfony/ux-icons": "^3.6",
         "symfony/ux-twig-component": "^3.6",
         "symfony/validator": "8.1.*",
-        "symfony/yaml": "8.1.*"
+        "symfony/yaml": "8.1.*",
+        "symfonycasts/sass-bundle": "^0.10.0",
+        "twbs/bootstrap": "5.3.8"
     },
     "config": {
         "allow-plugins": {

@@ -45,7 +45,13 @@ bash: ## Open a shell inside the running app container
 install: ## Install PHP dependencies (works even before containers are started)
 	$(COMPOSE) run --rm app composer install
 
-.PHONY: install
+sass: ## Compile Sass once (required before the first page load)
+	$(COMPOSE) exec app php bin/console sass:build
+
+sass-watch: ## Recompile Sass on every change
+	$(COMPOSE) exec app php bin/console sass:build --watch
+
+.PHONY: install sass sass-watch
 
 ##
 ## ----------------------------------------------------------------------------

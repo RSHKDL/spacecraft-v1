@@ -1,0 +1,9 @@
+symfonycasts_sass:
+    root_sass:
+        - 'assets/styles/app.scss'
+    sass_options:
+        # Bootstrap Sass sources, installed through Composer (twbs/bootstrap)
+        load_path:
+            - '%kernel.project_dir%/vendor/twbs/bootstrap/scss'
+        # Silence Bootstrap's own deprecation warnings (files from load_path)
+        quiet_deps: true

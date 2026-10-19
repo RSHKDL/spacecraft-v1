@@ -1,0 +1,34 @@
+// ----------------------------------------------------------------------------
+// Theme colors — must be declared BEFORE importing Bootstrap: its variables are
+// `!default`, so ours win and every derived shade (hover, active, subtle,
+// emphasis, dark mode variants) is computed from them.
+// ----------------------------------------------------------------------------
+
+// Brand palette
+$cosmic-cobalt: #4f6bed;
+$pacific-blue:  #46b1c9;
+$light-coral:   #ef6f6c;
+$dim-grey:      #666370;
+$space-indigo:  #1c1f33;
+$cosmic-white:  #f5f6fa;
+$star-white:    #e4e6ee;
+
+// Theme colors
+$primary:   $cosmic-cobalt;
+$secondary: $dim-grey;
+$success:   #5fb878;
+$info:      $pacific-blue;
+$warning:   #f2b84b;
+$danger:    $light-coral;
+$light:     $cosmic-white;
+$dark:      $space-indigo;
+
+// Dark theme surfaces
+$body-bg-dark:           $space-indigo;
+$body-secondary-bg-dark: mix(#fff, $space-indigo, 8%);
+$body-tertiary-bg-dark:  mix(#fff, $space-indigo, 5%); // sidebar
+$body-color-dark:        $star-white;
+
+// Dark text on light colored surfaces (success, info, warning, danger, light).
+// Primary keeps white text: cobalt is dark enough (4.51:1).
+$color-contrast-dark: $space-indigo;
