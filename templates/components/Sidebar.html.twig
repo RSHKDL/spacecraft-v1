@@ -1,0 +1,47 @@
+<nav class="sidebar bg-body-tertiary d-flex flex-column">
+    <div class="sidebar-edge d-flex align-items-center gap-2 px-3 border-bottom">
+        <span class="sidebar-slot">
+            <img
+                src="https://placehold.co/40x40"
+                class="rounded-circle"
+                alt="Commander Shepard"
+            >
+        </span>
+        <p class="sidebar-label mb-0">
+            <a href="#">Commander Shepard</a>
+        </p>
+    </div>
+    <div class="flex-grow-1 px-3 py-3">
+        <ul class="nav nav-pills flex-column flex-nowrap gap-2">
+            {% for item in this.menuItems %}
+                {% set is_disabled = item.route is null %}
+                {% set is_active = item.route is not null and item.route == app.current_route %}
+                <li class="nav-item">
+                    <a
+                        {% if not is_disabled %}href="{{ path(item.route) }}"{% endif %}
+                        class="nav-link d-flex align-items-center gap-2 ps-0 pe-3 {{ is_disabled ? 'disabled' : (is_active ? 'active' : 'link-body-emphasis') }}"
+                        {% if is_active %}aria-current="page"{% endif %}
+                        {% if is_disabled %}aria-disabled="true"{% endif %}
+                    >
+                        <span class="sidebar-slot">
+                            <twig:ux:icon name="{{ item.icon }}" aria-hidden="true" />
+                        </span>
+                        <span class="sidebar-label">
+                            {{ item.label|trans }}
+                        </span>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="sidebar-edge d-flex align-items-center gap-2 px-3 border-top">
+        <span class="sidebar-slot">
+            <img src="https://placehold.co/40x40" class="rounded" alt="Spacecraft">
+        </span>
+        <p class="sidebar-label mb-0">
+            Spacecraft
+            <twig:ux:icon name="fa7-regular:copyright" aria-hidden="true" />
+            {{ 'now'|date('Y')  }}
+        </p>
+    </div>
+</nav>

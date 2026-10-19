@@ -1,0 +1,6 @@
+twig_component:
+    anonymous_template_directory: 'components/'
+    defaults:
+        # Components are inbound adapters, like controllers: they live in Infrastructure.
+        # Class App\Infrastructure\Twig\Components\Sidebar -> templates/components/Sidebar.html.twig
+        App\Infrastructure\Twig\Components\: 'components/'

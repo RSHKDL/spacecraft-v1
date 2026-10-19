@@ -2,6 +2,12 @@ form:
     action_submit: Submit
     select_placeholder: Please choose an option.
 
+nav:
+    ship_list: The ships
+    ship_component_list: The shop
+    fleet_list: The fleets
+    crew_list: Hire a crew
+
 ship:
     list:
         title: All ships

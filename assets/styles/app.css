@@ -1,1 +1,51 @@
-/* Nothing yet */
+:root {
+    --sidebar-slot: 3rem;
+    --sidebar-edge: 5rem;
+    /* Slot + horizontal padding of the nav (p-3 = 1rem each side) */
+    --sidebar-collapsed: calc(var(--sidebar-slot) + 2rem);
+    --sidebar-expanded: 16rem;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1030;
+    width: var(--sidebar-collapsed);
+    height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    white-space: nowrap;
+    transition: width .2s ease;
+}
+
+.sidebar:hover,
+.sidebar:focus-within {
+    width: var(--sidebar-expanded);
+}
+
+.sidebar-label {
+    opacity: 0;
+    transition: opacity .2s ease;
+}
+.sidebar:hover .sidebar-label,
+.sidebar:focus-within .sidebar-label {
+    opacity: 1;
+}
+
+/* Reserve the collapsed width so content never sits under the sidebar */
+.with-sidebar {
+    padding-left: var(--sidebar-collapsed);
+}
+
+/* Header and footer share the same fixed height */
+.sidebar-edge {
+    flex: 0 0 var(--sidebar-edge);
+}
+
+/* Fixed-width slot so avatar, menu icons and logo share the same vertical axis */
+.sidebar-slot {
+    flex: 0 0 var(--sidebar-slot);
+    display: inline-flex;
+    justify-content: center;
+}
