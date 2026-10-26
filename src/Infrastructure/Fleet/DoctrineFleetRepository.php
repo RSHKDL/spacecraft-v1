@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Fleet;
 
 use App\Application\Fleet\Query\FleetFinder;
+use App\Application\Fleet\Query\FleetListView;
 use App\Application\Fleet\Query\FleetShipView;
 use App\Application\Fleet\Query\FleetView;
 use App\Domain\Fleet\Fleet;
@@ -18,6 +19,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * Persistent adapter for the FleetRepository port.
@@ -54,6 +56,13 @@ final readonly class DoctrineFleetRepository implements FleetRepository, FleetFi
         }
 
         return $fleet;
+    }
+
+    public function findAll(): array
+    {
+        $qb = $this->fleetQueryBuilder()->orderBy('f.name.value', 'ASC');
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findById(FleetId $id): ?FleetView
@@ -108,5 +117,14 @@ final readonly class DoctrineFleetRepository implements FleetRepository, FleetFi
             ->getResult();
 
         return array_column($rows, 'shipId');
+    }
+
+    private function fleetQueryBuilder(): QueryBuilder
+    {
+        return $this->entityManager->createQueryBuilder()
+            ->select(sprintf('NEW %s(f.id, f.name.value, COUNT(fa.shipId))', FleetListView::class))
+            ->from(Fleet::class, 'f')
+            ->leftJoin('f.fleetAssignments', 'fa')
+            ->groupBy('f.id', 'f.name.value');
     }
 }

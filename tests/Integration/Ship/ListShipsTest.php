@@ -26,13 +26,13 @@ final class ListShipsTest extends IntegrationTestCase
         // test both count and order of the $shipsList
         self::assertEquals([$corvetteId, $cruiserId], array_column($shipsList, 'id'));
 
-        $corvette = self::viewOf($corvetteId, $shipsList);
+        $corvette = self::shipViewOf($corvetteId, $shipsList);
         self::assertEquals($corvetteId, $corvette->id);
         self::assertSame(ShipClass::Corvette, $corvette->class);
         self::assertNull($corvette->name);
         self::assertSame(HullStatus::Intact, $corvette->hullStatus);
 
-        $cruiser = self::viewOf($cruiserId, $shipsList);
+        $cruiser = self::shipViewOf($cruiserId, $shipsList);
         self::assertEquals($cruiserId, $cruiser->id);
         self::assertSame(ShipClass::Cruiser, $cruiser->class);
     }

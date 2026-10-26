@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'fleet.list.title'|trans }}
+{% endblock title %}
+
+{% block body %}
+    <article>
+        <h1 class="mb-4">{{ 'fleet.list.title'|trans }}</h1>
+        <table class="table table-responsive">
+            <thead>
+                <tr>
+                    <th scope="col">{{ 'fleet.list.label_name'|trans }}</th>
+                    <th scope="col">{{ 'fleet.list.label_admiral'|trans }}</th>
+                    <th scope="col">{{ 'fleet.list.label_ship_count'|trans }}</th>
+                    <th scope="col">{{ 'fleet.list.label_fleet_power'|trans }}</th>
+                    <th scope="col">{{ 'fleet.list.label_readiness'|trans }}</th>
+                    <th scope="col">{{ 'fleet.list.label_activity'|trans }}</th>
+                    <th scope="col">{{ 'fleet.list.label_location'|trans }}</th>
+                    <th scope="col">{{ 'common.list.label_actions'|trans }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fleet in fleets %}
+                    <tr>
+                        <th scope="row">
+                                {{ fleet.name }}
+                        </th>
+                        <td>
+                            <span class="text-body-secondary">—</span> {# todo Admiral #}
+                        </td>
+                        <td>
+                            <span class="badge text-bg-secondary">{{ fleet.shipCount }}</span>
+                        </td>
+                        <td>
+                            <span class="text-body-secondary">—</span> {# todo Fleet power #}
+                        </td>
+                        <td>
+                            <span class="text-body-secondary">—</span> {# todo Readiness #}
+                        </td>
+                        <td>
+                            <span class="text-body-secondary">—</span> {# todo Activity #}
+                        </td>
+                        <td>
+                            <span class="text-body-secondary">—</span> {# todo Location #}
+                        </td>
+                        <td>
+                            <span class="text-body-secondary">—</span> {# todo Actions #}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-body-secondary">
+                            {{ 'fleet.list.empty'|trans }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+{% endblock body %}

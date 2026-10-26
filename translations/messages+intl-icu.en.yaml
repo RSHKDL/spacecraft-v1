@@ -8,6 +8,10 @@ nav:
     fleet_list: The fleets
     crew_list: Hire a crew
 
+common:
+    list:
+        label_actions: Actions
+
 ship:
     list:
         title: All ships
@@ -30,3 +34,15 @@ ship:
         cruiser: Cruiser
         battleship: Battleship
     not_christened: Ship not christened
+
+fleet:
+    list:
+        title: All fleets
+        label_name: Name
+        label_admiral: Admiral
+        label_ship_count: Ships in fleet
+        label_fleet_power: Est. fleet power
+        label_readiness: Readiness
+        label_activity: Activity
+        label_location: Location
+        empty: No fleets

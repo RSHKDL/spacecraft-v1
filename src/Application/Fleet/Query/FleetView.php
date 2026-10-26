@@ -11,7 +11,7 @@ final readonly class FleetView
 {
     public function __construct(
         public FleetId $id,
-        public ?string $name,
+        public string $name,
         public ?ShipId $flagshipId,
         /** @var FleetShipView[] $ships  */
         public array $ships,

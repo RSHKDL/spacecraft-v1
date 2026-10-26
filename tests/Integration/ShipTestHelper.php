@@ -19,7 +19,7 @@ trait ShipTestHelper
         return $shipId;
     }
 
-    protected static function viewOf(ShipId $shipId, array $views): ShipView
+    protected static function shipViewOf(ShipId $shipId, array $views): ShipView
     {
         /** @var ShipView $view */
         foreach ($views as $view) {
