@@ -6,12 +6,14 @@ namespace App\Infrastructure\Ship;
 
 use App\Application\Ship\Query\ShipFinder;
 use App\Application\Ship\Query\ShipView;
+use App\Domain\Fleet\FleetAssignment;
 use App\Domain\Ship\Ship;
 use App\Domain\Ship\ShipId;
 use App\Domain\Ship\ShipRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -49,6 +51,16 @@ final readonly class DoctrineShipRepository implements ShipRepository, ShipFinde
     public function findAll(): array
     {
         $qb = $this->shipQueryBuilder()->orderBy('s.id', 'ASC');
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findAvailable(): array
+    {
+        $qb = $this->shipQueryBuilder()
+            ->leftJoin(FleetAssignment::class, 'fa', Join::WITH, 'fa.shipId = s.id')
+            ->andWhere('fa.shipId IS NULL')
+            ->orderBy('s.id', 'ASC');
 
         return $qb->getQuery()->getResult();
     }

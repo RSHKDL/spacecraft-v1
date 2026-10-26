@@ -10,5 +10,7 @@ interface ShipFinder
 {
     /** @return ShipView[] */
     public function findAll(): array;
+    /** @return ShipView[] */
+    public function findAvailable(): array;
     public function findById(ShipId $id): ?ShipView;
 }

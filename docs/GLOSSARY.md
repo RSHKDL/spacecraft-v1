@@ -100,7 +100,7 @@ Named now to keep the language consistent; not modelled yet.
 |---|---|
 | **ShipBlueprint** | The *conceptual* ship: a reusable plan. Realized into a physical `Ship` via the `BuildFromBlueprint` command. |
 | **BuildFromBlueprint** | Command (use case): build a physical `Ship` from a `ShipBlueprint`. |
-| **CommissionShip** | Bringing an already-built ship into active service — a lifecycle step, distinct from construction. |
+| **CommissionShip** | Bringing an already-built ship into active service — a lifecycle step, distinct from construction. Candidate home for the **eligibility** rules (named, fully built, required modules fitted): `Ship::commission()` enforces them once, and only a commissioned ship can be assigned to a fleet. Eligibility is a property of the ship; **availability** (not serving in a fleet) is a relation between aggregates — two different rules. |
 | **Module** | A piece of equipment installed on a ship. |
 | **Slot** | A mounting point on a ship where a Module can be installed. |
 | **PowerBudget** | Energy produced vs. consumed on a ship; an installation invariant. |
