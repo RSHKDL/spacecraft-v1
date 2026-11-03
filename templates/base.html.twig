@@ -22,13 +22,7 @@
     <body class="with-sidebar">
         <twig:Sidebar />
         <main class="container py-4">
-            {% for label, messages in app.flashes %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ label }}" role="alert">
-                        {{ message|trans }}
-                    </div>
-                {% endfor %}
-            {% endfor %}
+            {{ include('_flashes.html.twig') }}
 
             {% block body %}{% endblock %}
         </main>

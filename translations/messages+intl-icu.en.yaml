@@ -46,6 +46,10 @@ fleet:
         label_activity: Activity
         label_location: Location
         empty: No fleets
+    actions:
+        form: Form a new fleet
+        details: Inspect fleet
+        disband: Disband fleet
     form:
         title: Fleet formation
         label_name: Name of the fleet
@@ -53,3 +57,6 @@ fleet:
         label_flagship: Select a flagship
         success: Fleet formed successfully
         back_link: Back to fleet list
+    disband:
+        confirm: 'Disband fleet "{name}"? Its ships will become available again.'
+        success: Fleet disbanded successfully

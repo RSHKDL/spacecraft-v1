@@ -25,4 +25,6 @@
 return [
     'app' => ['path' => './assets/app.js', 'entrypoint' => true],
     'htmx.org' => ['version' => '2.0.10'],
+    'bootstrap' => ['version' => '5.3.8'],
+    '@popperjs/core' => ['version' => '2.11.8'],
 ];

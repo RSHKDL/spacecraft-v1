@@ -1,0 +1,31 @@
+<div class="dropdown">
+    <button class="btn btn-primary btn-sm dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            data-bs-popper-config='{"strategy":"fixed"}'
+            aria-expanded="false"
+            aria-label="{{ 'common.list.label_actions'|trans }}"
+    >
+        <twig:ux:icon name="fa7-solid:cog" aria-hidden="true" />
+    </button>
+    <ul class="dropdown-menu">
+        <li>
+            <a class="dropdown-item disabled" aria-disabled="true">
+                <twig:ux:icon name="fa7-solid:eye" aria-hidden="true" />
+                {{ 'fleet.actions.details'|trans }}
+            </a>
+        </li>
+        <li>
+            <form
+                hx-post="{{ path('fleet_disband', {id: fleet.id.value}) }}"
+                hx-confirm="{{ 'fleet.disband.confirm'|trans({name: fleet.name}) }}"
+            >
+                <input type="hidden" name="_token" value="{{ csrf_token('submit') }}">
+                <button type="submit" class="dropdown-item">
+                    <twig:ux:icon name="fa7-solid:trash" aria-hidden="true" />
+                    {{ 'fleet.actions.disband'|trans }}
+                </button>
+            </form>
+        </li>
+    </ul>
+</div>
