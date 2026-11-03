@@ -17,7 +17,7 @@ final class FleetNameTest extends TestCase
         self::assertSame('1st Fleet', $name->getValue());
     }
 
-    #[DataProvider('nameProvider')]
+    #[DataProvider('invalidNameProvider')]
     public function testRejectInvalidState(string $name): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -25,9 +25,23 @@ final class FleetNameTest extends TestCase
         FleetName::create($name);
     }
 
-    public static function nameProvider(): iterable
+    public static function invalidNameProvider(): iterable
     {
         yield 'empty name' => [''];
         yield 'blank name' => ['           '];
+        yield 'name too long' => [str_repeat('a', 71)];
+    }
+
+    #[DataProvider('validNameProvider')]
+    public function testAcceptsNamesUpToTheLimit(string $name, string $expected): void
+    {
+        self::assertSame($expected, FleetName::create($name)->getValue());
+    }
+
+    public static function validNameProvider(): iterable
+    {
+        yield '70 chars ASCII' => [str_repeat('a', 70), str_repeat('a', 70)];
+        yield '70 chars ASCII with whitespace' => [' '.str_repeat('a', 70).' ', str_repeat('a', 70)];
+        yield '70 chars multi-octets' => [str_repeat('é', 70), str_repeat('é', 70)];
     }
 }

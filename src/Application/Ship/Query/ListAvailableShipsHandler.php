@@ -13,6 +13,7 @@ final readonly class ListAvailableShipsHandler
         private ShipFinder $finder
     ) {}
 
+    /** @return ShipView[] */
     public function __invoke(ListAvailableShips $query): array
     {
         return $this->finder->findAvailable();

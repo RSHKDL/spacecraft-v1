@@ -1,0 +1,5 @@
+fleet:
+    form:
+        flagship_not_enlisted: The flagship must be part of the fleet
+        ships_no_longer_available: Some ships are no longer available
+        flagship_no_longer_available: The selected ship is no longer available

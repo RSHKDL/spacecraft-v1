@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'fleet.form.title'|trans }}
+{% endblock title %}
+
+{% block body %}
+    <article>
+        <header>
+            <a href="{{ path('fleet_list') }}">{{ 'fleet.form.back_link'|trans }}</a>
+            <h1 class="mb-4">{{ 'fleet.form.title'|trans }}</h1>
+        </header>
+        {{ form_start(form, {'attr': {'novalidate': 'novalidate'}} ) }}
+            {{ form_errors(form) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.shipIds) }}
+            {{ form_row(form.flagshipId) }}
+            <button type="submit" class="btn btn-primary">{{ 'form.action_submit'|trans }}</button>
+        {{ form_end(form) }}
+    </article>
+{% endblock body %}

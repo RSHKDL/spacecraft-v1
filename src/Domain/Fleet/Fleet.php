@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity]
 final class Fleet
 {
-    private const int MINIMUM_SHIPS_TO_FORM_A_FLEET = 2;
+    public const int MINIMUM_SHIPS_TO_FORM_A_FLEET = 2;
 
     /** @var Collection<int, FleetAssignment> $fleetAssignments */
     #[ORM\OneToMany(

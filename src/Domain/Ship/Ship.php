@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Ship;
 
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -16,7 +17,7 @@ final class Ship
     // on write, so its invariants still hold at both boundaries -- without a
     // dedicated DBAL type. An embeddable is not an option here, since an absent
     // name has no representation in a schema made of the embeddable's fields.
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $name = null;
 
     private function __construct(

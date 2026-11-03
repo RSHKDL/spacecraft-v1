@@ -46,3 +46,10 @@ fleet:
         label_activity: Activity
         label_location: Location
         empty: No fleets
+    form:
+        title: Fleet formation
+        label_name: Name of the fleet
+        label_ships: Select ships
+        label_flagship: Select a flagship
+        success: Fleet formed successfully
+        back_link: Back to fleet list

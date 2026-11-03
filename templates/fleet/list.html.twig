@@ -6,7 +6,10 @@
 
 {% block body %}
     <article>
-        <h1 class="mb-4">{{ 'fleet.list.title'|trans }}</h1>
+        <header>
+            <h1 class="mb-4">{{ 'fleet.list.title'|trans }}</h1>
+            <a href="{{ path('fleet_form') }}" class="btn btn-primary">{{ 'fleet.form.title'|trans }}</a>
+        </header>
         <table class="table table-responsive">
             <thead>
                 <tr>
