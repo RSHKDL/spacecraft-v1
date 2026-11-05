@@ -22,4 +22,14 @@ enum ShipClass: string
             self::Battleship => 1200,
         };
     }
+
+    public function hullLayout(): HullLayout
+    {
+        return match ($this) {
+            self::Corvette => new HullLayout(1),
+            self::Frigate, self::Destroyer => new HullLayout(2),
+            self::Cruiser => new HullLayout(3),
+            self::Battleship => new HullLayout(4),
+        };
+    }
 }

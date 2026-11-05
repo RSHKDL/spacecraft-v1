@@ -8,4 +8,5 @@ enum ComponentType: string
 {
     case Reactor = 'reactor';
     case Weapon = 'weapon';
+    case Auxiliary = 'auxiliary';
 }
