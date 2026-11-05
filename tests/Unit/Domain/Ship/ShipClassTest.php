@@ -9,10 +9,12 @@ use PHPUnit\Framework\TestCase;
 
 final class ShipClassTest extends TestCase
 {
-    public function testEveryShipClassHasAPositiveBaseHull(): void
+    public function testShipClassesAreDeclaredFromSmallestToLargestWithPositiveBaseHull(): void
     {
+        $previous = 0;
         foreach (ShipClass::cases() as $shipClass) {
-            self::assertGreaterThan(0, $shipClass->baseHull());
+            self::assertGreaterThan($previous, $shipClass->baseHull());
+            $previous = $shipClass->baseHull();
         }
     }
 }
