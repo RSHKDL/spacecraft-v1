@@ -41,6 +41,17 @@ final class ShipDesign
             throw new \DomainException('A ship design cannot have more auxiliary components than its class has auxiliary slots');
         }
 
+        foreach ($components as $component) {
+            if (!in_array($class, $component->getSupportedShipClasses(), true)) {
+                throw new \DomainException(
+                    sprintf(
+                        'A ship design cannot have a component not designed for its class (%s)',
+                        $component->getType()->value
+                    )
+                );
+            }
+        }
+
         return new self($id, $components);
     }
 

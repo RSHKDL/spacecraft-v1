@@ -65,6 +65,31 @@ final class ShipDesignTest extends TestCase
     }
 
     /**
+     * @param list<ShipClass> $componentClasses
+     */
+    #[TestWith([ComponentType::Shield, [ShipClass::Corvette, ShipClass::Cruiser], ShipClass::Frigate], 'wrong shield class (unique component case)')]
+    #[TestWith([ComponentType::Weapon, [ShipClass::Destroyer], ShipClass::Frigate], 'wrong weapon class (multiple component case)')]
+    public function testADesignWithAComponentNotDesignedForItsClassIsRejected(
+        ComponentType $componentType,
+        array $componentClasses,
+        ShipClass $shipClass,
+    ): void
+    {
+        $components = [
+            self::createComponent(ComponentType::Reactor, [$shipClass]),
+            self::createComponent($componentType, $componentClasses),
+        ];
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessageIs(sprintf(
+            'A ship design cannot have a component not designed for its class (%s)',
+            $componentType->value
+        ));
+
+        self::drawWith($shipClass, $components);
+    }
+
+    /**
      * @param list<Component> $components
      */
     private static function drawWith(ShipClass $class, array $components): ShipDesign
@@ -72,8 +97,15 @@ final class ShipDesignTest extends TestCase
         return ShipDesign::draw(ShipDesignId::generate(), $class, $components);
     }
 
-    private static function createComponent(ComponentType $type): Component
+    /**
+     * @param list<ShipClass> $shipClasses
+     */
+    private static function createComponent(ComponentType $type, ?array $shipClasses = null): Component
     {
-        return Component::createFrom(ComponentModel::release(ComponentModelId::generate(), $type));
+        if (null === $shipClasses) {
+            $shipClasses = ShipClass::cases();
+        }
+
+        return Component::createFrom(ComponentModel::release(ComponentModelId::generate(), $type, $shipClasses));
     }
 }

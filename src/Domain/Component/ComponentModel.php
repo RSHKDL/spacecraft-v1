@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Component;
 
+use App\Domain\Ship\ShipClass;
+
 final class ComponentModel
 {
     private bool $discontinued = false;
@@ -11,11 +13,19 @@ final class ComponentModel
     private function __construct(
         private readonly ComponentModelId $id,
         private readonly ComponentType $type,
+        private readonly array $shipClasses,
     ) {}
 
-    public static function release(ComponentModelId $id, ComponentType $type): self
+    /**
+     * @param list<ShipClass> $shipClasses
+     */
+    public static function release(ComponentModelId $id, ComponentType $type, array $shipClasses): self
     {
-        return new self($id, $type);
+        if ([] === $shipClasses) {
+            throw new \DomainException('A component model must support at least one ship class');
+        }
+
+        return new self($id, $type, $shipClasses);
     }
 
     public function discontinue(): void
@@ -31,5 +41,13 @@ final class ComponentModel
     public function getType(): ComponentType
     {
         return $this->type;
+    }
+
+    /**
+     * @return list<ShipClass>
+     */
+    public function getSupportedShipClasses(): array
+    {
+        return $this->shipClasses;
     }
 }
