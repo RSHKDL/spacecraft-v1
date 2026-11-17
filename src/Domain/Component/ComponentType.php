@@ -6,7 +6,18 @@ namespace App\Domain\Component;
 
 enum ComponentType: string
 {
-    case Reactor = 'reactor';
-    case Weapon = 'weapon';
     case Auxiliary = 'auxiliary';
+    case Reactor = 'reactor';
+    case Shield = 'shield';
+    case Weapon = 'weapon';
+
+    public function allowsMultiple(): bool
+    {
+        return match ($this) {
+            self::Auxiliary,
+            self::Weapon => true,
+            self::Reactor,
+            self::Shield => false,
+        };
+    }
 }

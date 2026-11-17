@@ -127,16 +127,15 @@ intended meaning, not a side effect.
 
 | Term | Kind | Definition |
 |---|---|---|
-| **ComponentModel** | Aggregate Root (Catalog) | A component **model** on offer, e.g. reactor "A Mk1". Has a `ComponentType`, a `ComponentSize` (weapons and defense only), a `Manufacturer`, a designation, and either a power output (reactors) or a power draw (everything else). Enters the catalog through `ComponentModel::release()`. **Interchangeable units**: two units of the same model cannot be told apart, so a design line has no identity of its own (see `ShipComponent` in reserved terms). |
+| **ComponentModel** | Aggregate Root (Catalog) | A component **model** on offer, e.g. reactor "A Mk1". Has a `ComponentType`, the **`ShipClass`es it fits** (at least one), a `Manufacturer`, a designation, and either a power output (reactors) or a power draw (everything else). A line is declined per hull, each model with its own stats: reactor "AA10" fits corvettes and destroyers, "AA10-s" cruisers only, "AA10-x" battleships only. Enters the catalog through `ComponentModel::release()`. **Interchangeable units**: two units of the same model cannot be told apart, so a design line has no identity of its own (see `ShipComponent` in reserved terms). |
 | **ComponentModelId** | Value Object | The model's identity, an `Identifier` like `ShipId` and `FleetId`. |
-| **ComponentType** | Value Object (enum) | What a component does, which decides where it goes on a hull: **reactor** and **FTL drive** (core), **weapon**, **armor** and **shield** (defense), **auxiliary** (everything else: jammer, cloaking device…). |
-| **ComponentSize** | Value Object (enum) | **S**, **M** or **L**, for weapons and defense only. Each size costs capacity points: S = 1, M = 2, L = 4 (1 L = 2 M = 4 S). Core and auxiliary components have no size. |
-| **Component** | Value Object | What a design or a ship carries: the characteristics of a `ComponentModel` **copied at the moment of use** (designation, manufacturer, type, size, power). Also keeps the source `ComponentModelId`, for **traceability only**. Nothing reads the catalog through it. Belongs to the `ShipDesign` aggregate (`Domain/ShipDesign`), not to the catalog: it is the design's copy. **No identity**: two components copied from the same model are equal. |
+| **ComponentType** | Value Object (enum) | What a component does. Also decides **how many** a design may carry. **Single** types, at most one per design: **reactor** (mandatory), **FTL drive**, **onboard computer**, **shield**, **armor**. **Multiple** types, limited by the slots of the `HullLayout`: **weapon**, **auxiliary** (everything else: jammer, cloaking device…). |
+| **Component** | Value Object | What a design or a ship carries: the characteristics of a `ComponentModel` **copied at the moment of use** (designation, manufacturer, type, compatible `ShipClass`es, power). Also keeps the source `ComponentModelId`, for **traceability only**. Nothing reads the catalog through it. Belongs to the `ShipDesign` aggregate (`Domain/ShipDesign`), not to the catalog: it is the design's copy. **No identity**: two components copied from the same model are equal. |
 | **Discontinue** | Command (use case) | Stop the production and sale of a component model. It disappears from what can be fitted in a **new** design or revision. Existing designs and ships are untouched. A state change, **not a deletion**: the catalog keeps its history. **Idempotent**: discontinuing an already discontinued model is a no-op, like detaching a ship that is not enlisted. |
-| **HullLayout** | Value Object | What a hull offers, given by its `ShipClass` for now: the **core slots** (one reactor, mandatory; one FTL drive, optional), a **weapon capacity** and a **defense capacity** (in S points), and a number of **auxiliary slots**. When sections arrive, the layout will come from the chosen sections instead: the rest of the model only reads a `HullLayout`. |
-| **Slot** | Concept | A place for exactly **one** component, regardless of size: the core slots and the auxiliary slots. Weapons and defense have no slots, only a capacity. |
-| **Capacity** | Concept | A budget of S points for weapons, and another for defense. Components are mixed freely as long as their sizes add up to no more than the capacity: a capacity of 3 takes S+S+S or M+S, never L. Unused capacity is allowed. |
-| **ShipDesign** | Aggregate Root (Shipyard) | A named plan for one `ShipClass`: the `Component`s fitted on its `HullLayout`. **Always valid**: it has a reactor, at most one component per slot, weapons and defense within their capacities, every component in a place made for its type, and a `PowerBalance` that is never negative. An invalid combination is a draft in the UI, never a `ShipDesign`. Replaces the reserved term *ShipBlueprint*. |
+| **HullLayout** | Value Object | How many components of the **multiple** types a hull takes, given by its `ShipClass` for now: a number of **weapon slots** and of **auxiliary slots**. Single types need no layout: every hull has one place for each. When sections arrive, the layout will come from the chosen sections instead: the rest of the model only reads a `HullLayout`. |
+| **Slot** | Concept | A place for exactly **one** component. Every hull has one slot per single type; weapon and auxiliary slots are counted by the `HullLayout`. Empty slots are allowed, except the reactor's. |
+| **Compatibility** | Concept | A component fits a design only if the design's `ShipClass` is among the classes of its model. Decided by the catalog, **copied** into the `Component`, checked by `ShipDesign`. Per `ShipClass`, not per `HullLayout`: a component fits a hull, not a slot count. |
+| **ShipDesign** | Aggregate Root (Shipyard) | A named plan for one `ShipClass`: the `Component`s fitted on its `HullLayout`. **Always valid**: it has a reactor, at most one component of each single type, no more weapons and auxiliaries than its slots, only components compatible with its class, and a `PowerBalance` that is never negative. An invalid combination is a draft in the UI, never a `ShipDesign`. Replaces the reserved term *ShipBlueprint*. |
 | **ShipDesignId** | Value Object | The design's identity. |
 | **Revision** | Concept | Editing a design produces a new **revision** of it. Ships keep the revision they were built or last upgraded with. |
 | **PowerBalance** | Value Object | Power supplied by the reactor minus power drawn by the other components. An invariant of `ShipDesign`: it is never negative. Replaces the reserved term *PowerBudget*. |
@@ -149,16 +148,20 @@ intended meaning, not a side effect.
 
 ### Hull layouts
 
-Weapon and defense capacities are in S points. Every hull has one reactor slot
-(mandatory) and one FTL drive slot (optional).
+Every hull has one slot for each single type: reactor (mandatory), FTL drive,
+onboard computer, shield, armor (all optional). The layout only counts the
+multiple types:
 
-| ShipClass | Weapon capacity | Defense capacity | Auxiliary slots |
-|---|---|---|---|
-| Corvette | 3 | 3 | 1 |
-| Frigate | 5 | 5 | 2 |
-| Destroyer | 5 | 6 | 2 |
-| Cruiser | 12 | 16 | 3 |
-| Battleship | 24 | 24 | 4 |
+| ShipClass | Weapon slots | Auxiliary slots |
+|---|---|---|
+| Corvette | 2 | 1 |
+| Frigate | 3 | 2 |
+| Destroyer | 4 | 2 |
+| Cruiser | 6 | 3 |
+| Battleship | 10 | 4 |
+
+Slots are **space**, the reactor is **energy**: a design must fit both. Even with
+free slots, the `PowerBalance` decides which weapons can actually be powered.
 
 Because a ship's loadout only ever comes from a valid design, the ship needs **no
 power rule of its own**: the invariant lives in one place, `ShipDesign`.
@@ -181,7 +184,7 @@ Named now to keep the language consistent; not modelled yet.
 | Term | Meaning |
 |---|---|
 | **CommissionShip** | Bringing an already-built ship into active service — a lifecycle step, distinct from construction. Candidate home for the **eligibility** rules (named, fully built, required components fitted): `Ship::commission()` enforces them once, and only a commissioned ship can be assigned to a fleet. Eligibility is a property of the ship; **availability** (not serving in a fleet) is a relation between aggregates — two different rules. |
-| **Section** | A part of a hull (bow, core, stern) with alternative variants to choose from. The `HullLayout` then comes from the chosen sections, no longer from the `ShipClass` directly. Capacities already let a design mix sizes freely, which covers part of what sections bring. Trigger: a hull whose variants differ by more than their weapon/defense mix (e.g. auxiliary slots, core). |
+| **Section** | A part of a hull (bow, core, stern) with alternative variants to choose from. The `HullLayout` then comes from the chosen sections, no longer from the `ShipClass` directly. Trigger: a hull offered in several variants (more weapons versus more auxiliaries, for instance). |
 | **ShipComponent** | A physical, **identified** piece fitted on a ship (`ComponentId`), with its own lifecycle: wear, removal from one ship and refitting on another. An Entity, created by `BuildShip` from a design's `Component`, which stays a value: a design is a plan, not a set of physical pieces. Replaces the reserved term *ComponentUnit*. Trigger: the first rule that tells two pieces of the same model apart. |
 | **Stock** | How many units of a component are on hand. A third concept, distinct from the catalog (what exists) and the loadout (what is fitted). Would decide whether an obsolete design can still be built. |
 | **Mark** | The generation of a component within a line (Mk1, Mk2), with a *supersedes* relation between them. Not needed while upgrades go through designs. |

@@ -25,8 +25,14 @@ final class ShipDesign
             throw new \DomainException('A ship design must have a reactor component');
         }
 
-        if ($reactorCount > 1) {
-            throw new \DomainException('A ship design cannot have more than one reactor component');
+        foreach (ComponentType::cases() as $type) {
+            if ($type->allowsMultiple()) {
+                continue;
+            }
+
+            if (self::countOf($components, $type) > 1) {
+                throw new \DomainException(sprintf('A ship design cannot have more than one %s component', $type->value));
+            }
         }
 
         $auxiliaryCount = self::countOf($components, ComponentType::Auxiliary);

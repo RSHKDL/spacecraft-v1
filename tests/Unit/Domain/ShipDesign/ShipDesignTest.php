@@ -11,6 +11,7 @@ use App\Domain\Ship\ShipClass;
 use App\Domain\ShipDesign\Component;
 use App\Domain\ShipDesign\ShipDesign;
 use App\Domain\ShipDesign\ShipDesignId;
+use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 final class ShipDesignTest extends TestCase
@@ -25,12 +26,18 @@ final class ShipDesignTest extends TestCase
         self::drawWith(ShipClass::Frigate, $components);
     }
 
-    public function testADesignWithMoreThanOneReactorIsRejected(): void
+    #[TestWith([ComponentType::Reactor], 'multiple reactors')]
+    #[TestWith([ComponentType::Shield], 'multiple shields')]
+    public function testADesignWithMoreThanOneUniqueComponentIsRejected(ComponentType $type): void
     {
-        $components = [self::createComponent(ComponentType::Reactor), self::createComponent(ComponentType::Reactor)];
+        $components = [
+            self::createComponent(ComponentType::Reactor),
+            self::createComponent($type),
+            self::createComponent($type),
+        ];
 
         $this->expectException(\DomainException::class);
-        $this->expectExceptionMessageIs('A ship design cannot have more than one reactor component');
+        $this->expectExceptionMessageIs(sprintf('A ship design cannot have more than one %s component', $type->value));
 
         self::drawWith(ShipClass::Frigate, $components);
     }
