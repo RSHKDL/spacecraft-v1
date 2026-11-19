@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Component;
 
-final readonly class PowerOutput
+final readonly class PowerOutput implements Power
 {
     private function __construct(
         private int $value,

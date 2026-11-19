@@ -14,7 +14,7 @@ final class ComponentModel
         private readonly ComponentModelId $id,
         private readonly ComponentType $type,
         private readonly array $shipClasses,
-        private readonly PowerOutput|PowerConsumption $power,
+        private readonly Power $power,
     ) {}
 
     /**
@@ -24,7 +24,7 @@ final class ComponentModel
         ComponentModelId $id,
         ComponentType $type,
         array $shipClasses,
-        PowerOutput|PowerConsumption $power,
+        Power $power,
     ): self
     {
         if ([] === $shipClasses) {
@@ -63,5 +63,10 @@ final class ComponentModel
     public function getSupportedShipClasses(): array
     {
         return $this->shipClasses;
+    }
+
+    public function getPower(): Power
+    {
+        return $this->power;
     }
 }
