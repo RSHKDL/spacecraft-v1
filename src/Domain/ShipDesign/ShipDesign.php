@@ -25,20 +25,21 @@ final class ShipDesign
             throw new \DomainException('A ship design must have a reactor component');
         }
 
-        foreach (ComponentType::cases() as $type) {
-            if ($type->allowsMultiple()) {
-                continue;
-            }
+        $layout = $class->hullLayout();
 
-            if (self::countOf($components, $type) > 1) {
+        foreach (ComponentType::cases() as $type) {
+            $componentCount = self::countOf($components, $type);
+
+            if ($componentCount > $layout->getSlotsFor($type)) {
+                if ($type->allowsMultiple()) {
+                    throw new \DomainException(sprintf(
+                        'A ship design cannot have more %s components than its class has %1$s slots',
+                        $type->value,
+                    ));
+                }
+
                 throw new \DomainException(sprintf('A ship design cannot have more than one %s component', $type->value));
             }
-        }
-
-        $auxiliaryCount = self::countOf($components, ComponentType::Auxiliary);
-
-        if ($auxiliaryCount > $class->hullLayout()->getAuxiliarySlots()) {
-            throw new \DomainException('A ship design cannot have more auxiliary components than its class has auxiliary slots');
         }
 
         foreach ($components as $component) {

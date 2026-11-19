@@ -26,10 +26,11 @@ enum ShipClass: string
     public function hullLayout(): HullLayout
     {
         return match ($this) {
-            self::Corvette => new HullLayout(1),
-            self::Frigate, self::Destroyer => new HullLayout(2),
-            self::Cruiser => new HullLayout(3),
-            self::Battleship => new HullLayout(4),
+            self::Corvette => new HullLayout(weaponSlots: 2, auxiliarySlots: 1),
+            self::Frigate => new HullLayout(weaponSlots: 3, auxiliarySlots: 2),
+            self::Destroyer => new HullLayout(weaponSlots: 5, auxiliarySlots: 2),
+            self::Cruiser => new HullLayout(weaponSlots: 8, auxiliarySlots: 3),
+            self::Battleship => new HullLayout(weaponSlots: 10, auxiliarySlots: 4),
         };
     }
 }

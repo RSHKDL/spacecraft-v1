@@ -150,15 +150,7 @@ intended meaning, not a side effect.
 
 Every hull has one slot for each single type: reactor (mandatory), FTL drive,
 onboard computer, shield, armor (all optional). The layout only counts the
-multiple types:
-
-| ShipClass | Weapon slots | Auxiliary slots |
-|---|---|---|
-| Corvette | 2 | 1 |
-| Frigate | 3 | 2 |
-| Destroyer | 4 | 2 |
-| Cruiser | 6 | 3 |
-| Battleship | 10 | 4 |
+multiple types: weapon and auxiliary slots, which grow with the `ShipClass`.
 
 Slots are **space**, the reactor is **energy**: a design must fit both. Even with
 free slots, the `PowerBalance` decides which weapons can actually be powered.

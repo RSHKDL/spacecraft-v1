@@ -11,6 +11,7 @@ use App\Domain\Ship\ShipClass;
 use App\Domain\ShipDesign\Component;
 use App\Domain\ShipDesign\ShipDesign;
 use App\Domain\ShipDesign\ShipDesignId;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
@@ -50,18 +51,56 @@ final class ShipDesignTest extends TestCase
         self::assertEquals([$reactorComponent], $design->getComponents());
     }
 
-    public function testACorvetteDesignWithTwoAuxiliaryComponentsIsRejected(): void
+    #[DataProvider('slotsLimitProvider')]
+    public function testADesignWithMoreComponentsThanItsSlotsIsRejected(
+        ShipClass $class,
+        ComponentType $componentType,
+        int $limit,
+    ): void
     {
         $components = [
             self::createComponent(ComponentType::Reactor),
-            self::createComponent(ComponentType::Auxiliary),
-            self::createComponent(ComponentType::Auxiliary),
         ];
 
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessageIs('A ship design cannot have more auxiliary components than its class has auxiliary slots');
+        for ($i = 0; $i < $limit + 1; $i++) {
+            $components[] = self::createComponent($componentType);
+        }
 
-        self::drawWith(ShipClass::Corvette, $components);
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessageIs(sprintf(
+            'A ship design cannot have more %s components than its class has %1$s slots',
+            $componentType->value,
+        ));
+
+        self::drawWith($class, $components);
+    }
+
+    #[DataProvider('slotsLimitProvider')]
+    public function testADesignFillingItsComponentSlotsIsAccepted(
+        ShipClass $class,
+        ComponentType $componentType,
+        int $limit,
+    ): void
+    {
+        $components = [
+            self::createComponent(ComponentType::Reactor),
+        ];
+
+        for ($i = 0; $i < $limit; $i++) {
+            $components[] = self::createComponent($componentType);
+        }
+
+        $design = self::drawWith($class, $components);
+
+        self::assertEquals($components, $design->getComponents());
+    }
+
+    public static function slotsLimitProvider(): iterable
+    {
+        yield 'frigate weapons limit' => [ShipClass::Frigate, ComponentType::Weapon, 3];
+        yield 'corvette weapons limit' => [ShipClass::Corvette, ComponentType::Weapon, 2];
+        yield 'frigate auxiliaries limit' => [ShipClass::Frigate, ComponentType::Auxiliary, 2];
+        yield 'corvette auxiliaries limit' => [ShipClass::Corvette, ComponentType::Auxiliary, 1];
     }
 
     /**
