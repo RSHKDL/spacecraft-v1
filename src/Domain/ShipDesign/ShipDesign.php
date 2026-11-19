@@ -53,6 +53,10 @@ final class ShipDesign
             }
         }
 
+        if (PowerBalance::of($components)->getValue() < 0) {
+            throw new \DomainException('The power balance of a ship design cannot be negative');
+        }
+
         return new self($id, $components);
     }
 

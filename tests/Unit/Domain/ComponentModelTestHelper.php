@@ -7,9 +7,11 @@ namespace App\Tests\Unit\Domain;
 use App\Domain\Component\ComponentModel;
 use App\Domain\Component\ComponentModelId;
 use App\Domain\Component\ComponentType;
+use App\Domain\Component\Power;
 use App\Domain\Component\PowerConsumption;
 use App\Domain\Component\PowerOutput;
 use App\Domain\Ship\ShipClass;
+use App\Domain\ShipDesign\Component;
 
 trait ComponentModelTestHelper
 {
@@ -19,7 +21,7 @@ trait ComponentModelTestHelper
     private static function releaseModel(
         ComponentType $type,
         ?array $shipClasses = null,
-        PowerOutput|PowerConsumption|null $power = null,
+        ?Power $power = null,
     ): ComponentModel
     {
         $shipClasses ??= ShipClass::cases();
@@ -29,5 +31,13 @@ trait ComponentModelTestHelper
             : PowerConsumption::create(0);
 
         return ComponentModel::release(ComponentModelId::generate(), $type, $shipClasses, $power);
+    }
+
+    /**
+     * @param list<ShipClass>|null $shipClasses
+     */
+    private static function createComponent(ComponentType $type, ?array $shipClasses = null, ?Power $power = null): Component
+    {
+        return Component::createFrom(self::releaseModel($type, $shipClasses, $power));
     }
 }

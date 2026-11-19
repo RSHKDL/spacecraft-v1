@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\ShipDesign;
 
 use App\Domain\Component\ComponentType;
+use App\Domain\Component\PowerConsumption;
+use App\Domain\Component\PowerOutput;
 use App\Domain\Ship\ShipClass;
 use App\Domain\ShipDesign\Component;
 use App\Domain\ShipDesign\ShipDesign;
@@ -129,19 +131,36 @@ final class ShipDesignTest extends TestCase
         self::drawWith($shipClass, $components);
     }
 
+    public function testADesignWithANegativePowerBalanceIsRejected(): void
+    {
+        $components = [
+            self::createComponent(type: ComponentType::Reactor, power: PowerOutput::create(75)),
+            self::createComponent(type: ComponentType::Weapon, power: PowerConsumption::create(76)),
+        ];
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessageIs('The power balance of a ship design cannot be negative');
+
+        self::drawWith(ShipClass::Corvette, $components);
+    }
+
+    public function testADesignWithAZeroPowerBalanceIsAccepted(): void
+    {
+        $components = [
+            self::createComponent(type: ComponentType::Reactor, power: PowerOutput::create(75)),
+            self::createComponent(type: ComponentType::Weapon, power: PowerConsumption::create(75)),
+        ];
+
+        $design = self::drawWith(ShipClass::Corvette, $components);
+
+        self::assertEquals($components, $design->getComponents());
+    }
+
     /**
      * @param list<Component> $components
      */
     private static function drawWith(ShipClass $class, array $components): ShipDesign
     {
         return ShipDesign::draw(ShipDesignId::generate(), $class, $components);
-    }
-
-    /**
-     * @param list<ShipClass> $shipClasses
-     */
-    private static function createComponent(ComponentType $type, ?array $shipClasses = null): Component
-    {
-        return Component::createFrom(self::releaseModel($type, $shipClasses));
     }
 }
