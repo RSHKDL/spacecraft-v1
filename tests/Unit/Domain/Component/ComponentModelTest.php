@@ -4,14 +4,18 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Component;
 
-use App\Domain\Component\ComponentModel;
-use App\Domain\Component\ComponentModelId;
 use App\Domain\Component\ComponentType;
+use App\Domain\Component\PowerConsumption;
+use App\Domain\Component\PowerOutput;
 use App\Domain\Ship\ShipClass;
+use App\Tests\Unit\Domain\ComponentModelTestHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class ComponentModelTest extends TestCase
 {
+    use ComponentModelTestHelper;
+
     public function testAReleasedComponentModelIsNotDiscontinued(): void
     {
         $componentModel = self::releaseModel(ComponentType::Reactor, ShipClass::cases());
@@ -44,11 +48,24 @@ final class ComponentModelTest extends TestCase
         self::releaseModel(ComponentType::Shield, []);
     }
 
-    /**
-     * @param list<ShipClass> $shipClasses
-     */
-    private static function releaseModel(ComponentType $type, array $shipClasses): ComponentModel
+    #[DataProvider('mismatchPowerProvider')]
+    public function testAComponentModelWhosePowerDoesNotMatchItsTypeIsRejected(
+        ComponentType $type,
+        PowerOutput|PowerConsumption $power,
+    ): void
     {
-        return ComponentModel::release(ComponentModelId::generate(), $type, $shipClasses);
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessageIs('A component model power must match its type');
+
+        self::releaseModel($type, [ShipClass::Corvette], $power);
+    }
+
+    /**
+     * @return iterable<string, array{ComponentType, PowerOutput|PowerConsumption}>
+     */
+    public static function mismatchPowerProvider(): iterable
+    {
+        yield 'reactor with power consumption' => [ComponentType::Reactor, PowerConsumption::create(1)];
+        yield 'weapon with power output' => [ComponentType::Weapon, PowerOutput::create(1)];
     }
 }

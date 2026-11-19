@@ -20,4 +20,12 @@ enum ComponentType: string
             self::Shield => false,
         };
     }
+
+    public function suppliesPower(): bool
+    {
+        return match ($this) {
+            self::Reactor => true,
+            default => false,
+        };
+    }
 }

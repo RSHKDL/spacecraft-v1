@@ -14,18 +14,32 @@ final class ComponentModel
         private readonly ComponentModelId $id,
         private readonly ComponentType $type,
         private readonly array $shipClasses,
+        private readonly PowerOutput|PowerConsumption $power,
     ) {}
 
     /**
      * @param list<ShipClass> $shipClasses
      */
-    public static function release(ComponentModelId $id, ComponentType $type, array $shipClasses): self
+    public static function release(
+        ComponentModelId $id,
+        ComponentType $type,
+        array $shipClasses,
+        PowerOutput|PowerConsumption $power,
+    ): self
     {
         if ([] === $shipClasses) {
             throw new \DomainException('A component model must support at least one ship class');
         }
 
-        return new self($id, $type, $shipClasses);
+        $powerMatchesType = $type->suppliesPower()
+            ? $power instanceof PowerOutput
+            : $power instanceof PowerConsumption;
+
+        if (!$powerMatchesType) {
+            throw new \DomainException('A component model power must match its type');
+        }
+
+        return new self($id, $type, $shipClasses, $power);
     }
 
     public function discontinue(): void

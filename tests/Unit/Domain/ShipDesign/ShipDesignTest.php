@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\ShipDesign;
 
-use App\Domain\Component\ComponentModel;
-use App\Domain\Component\ComponentModelId;
 use App\Domain\Component\ComponentType;
 use App\Domain\Ship\ShipClass;
 use App\Domain\ShipDesign\Component;
 use App\Domain\ShipDesign\ShipDesign;
 use App\Domain\ShipDesign\ShipDesignId;
+use App\Tests\Unit\Domain\ComponentModelTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
 
 final class ShipDesignTest extends TestCase
 {
+    use ComponentModelTestHelper;
+
     public function testADesignWithoutAReactorIsRejected(): void
     {
         $components = [self::createComponent(ComponentType::Weapon), self::createComponent(ComponentType::Weapon)];
@@ -141,10 +142,6 @@ final class ShipDesignTest extends TestCase
      */
     private static function createComponent(ComponentType $type, ?array $shipClasses = null): Component
     {
-        if (null === $shipClasses) {
-            $shipClasses = ShipClass::cases();
-        }
-
-        return Component::createFrom(ComponentModel::release(ComponentModelId::generate(), $type, $shipClasses));
+        return Component::createFrom(self::releaseModel($type, $shipClasses));
     }
 }
