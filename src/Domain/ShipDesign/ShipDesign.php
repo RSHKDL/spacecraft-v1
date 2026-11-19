@@ -11,13 +11,15 @@ final class ShipDesign
 {
     private function __construct(
         private readonly ShipDesignId $id,
+        private readonly ShipDesignName $name,
+        private readonly ShipClass $class,
         private readonly array $components,
     ) {}
 
     /**
      * @param list<Component> $components
      */
-    public static function draw(ShipDesignId $id, ShipClass $class, array $components): self
+    public static function draw(ShipDesignId $id, ShipDesignName $name, ShipClass $class, array $components): self
     {
         $reactorCount = self::countOf($components, ComponentType::Reactor);
 
@@ -57,7 +59,7 @@ final class ShipDesign
             throw new \DomainException('The power balance of a ship design cannot be negative');
         }
 
-        return new self($id, $components);
+        return new self($id, $name, $class, $components);
     }
 
     /**
@@ -66,6 +68,16 @@ final class ShipDesign
     public function getComponents(): array
     {
         return $this->components;
+    }
+
+    public function getName(): ShipDesignName
+    {
+        return $this->name;
+    }
+
+    public function getClass(): ShipClass
+    {
+        return $this->class;
     }
 
     /**

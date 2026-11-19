@@ -11,6 +11,7 @@ use App\Domain\Ship\ShipClass;
 use App\Domain\ShipDesign\Component;
 use App\Domain\ShipDesign\ShipDesign;
 use App\Domain\ShipDesign\ShipDesignId;
+use App\Domain\ShipDesign\ShipDesignName;
 use App\Tests\Unit\Domain\ComponentModelTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
@@ -156,11 +157,23 @@ final class ShipDesignTest extends TestCase
         self::assertEquals($components, $design->getComponents());
     }
 
+    public function testADesignKeepsItsNameAndClass(): void
+    {
+        $components = [
+            self::createComponent(type: ComponentType::Reactor),
+        ];
+
+        $design = self::drawWith(ShipClass::Frigate, $components, 'Harbinger');
+
+        self::assertSame(ShipClass::Frigate, $design->getClass());
+        self::assertSame('Harbinger', $design->getName()->getValue());
+    }
+
     /**
      * @param list<Component> $components
      */
-    private static function drawWith(ShipClass $class, array $components): ShipDesign
+    private static function drawWith(ShipClass $class, array $components, string $name = 'Default'): ShipDesign
     {
-        return ShipDesign::draw(ShipDesignId::generate(), $class, $components);
+        return ShipDesign::draw(ShipDesignId::generate(), ShipDesignName::create($name), $class, $components);
     }
 }
