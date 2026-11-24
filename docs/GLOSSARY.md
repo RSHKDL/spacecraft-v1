@@ -105,7 +105,7 @@ The same reactor means three different things depending on where it is read:
 |---|---|---|
 | **Catalog** | A `ComponentModel` on offer: "A Mk1", its maker, its power output, whether it is still sold | The catalog edits or discontinues it |
 | **Shipyard** | A `Component` fitted on a `ShipDesign` | The design is revised |
-| **Ship** | A `ShipComponent` in the ship's `Loadout` (later) | The ship is upgraded or retrofitted |
+| **Ship** | A `ShipComponent` in the ship's `Loadout` (later) | The ship is retrofitted |
 
 The words follow the levels: the catalog sells **models**; designs and ships carry
 **components**. "The A Mk1 model is no longer sold" / "my corvette has two
@@ -118,7 +118,7 @@ happens to the customer's profile or the product's price. Hence:
 
 - discontinuing a component model — or even deleting it from the catalog — leaves every
   design and every ship intact;
-- revising a design leaves every ship built from it intact, until it is upgraded;
+- revising a design leaves every ship built from it intact, until it is retrofitted;
 - a ship can check its own rules without querying the catalog or the shipyard.
 
 The copy freezes **everything**, including mistakes: fixing a typo in a
@@ -138,13 +138,12 @@ intended meaning, not a side effect.
 | **ShipDesign** | Aggregate Root (Shipyard) | A named plan for one `ShipClass`: the `Component`s fitted on its `HullLayout`. **Always valid**: it has a reactor, at most one component of each single type, no more weapons and auxiliaries than its slots, only components compatible with its class, and a `PowerBalance` that is never negative. An invalid combination is a draft in the UI, never a `ShipDesign`. Replaces the reserved term *ShipBlueprint*. |
 | **ShipDesignId** | Value Object | The design's identity. |
 | **ShipDesignName** | Value Object | The design's name (*Harbinger*). Non-empty, length-bounded, trimmed. **Required**. Holds the bare name: the *-class* suffix (*Harbinger-class Frigate*) is a label, added by the template. |
-| **Revision** | Concept | Editing a design produces a new **revision** of it. Ships keep the revision they were built or last upgraded with. |
+| **Revision** | Concept | Editing a design produces a new **revision** of it. Ships keep the revision they were built or last retrofitted with. |
 | **PowerBalance** | Value Object | Power supplied (`PowerOutput`) minus power drawn (`PowerConsumption`). A measure: it **can be negative**, so a draft in the UI can show a deficit. The invariant belongs to `ShipDesign`: a design's balance is never negative. Replaces the reserved term *PowerBudget*. |
 | **Obsolete** | State of a `ShipDesign` | The design fits at least one discontinued component. Still a valid design, and its ships are still valid ships. Like *degraded* fleets, it is **surfaced**, not prevented. Open: can new ships still be built from it? (Probably not: a discontinued component can no longer be bought, and there is no stock yet.) |
 | **Loadout** | Value Object | The components fitted on a ship, copied from a design revision. A ship changes its loadout only through a design, never component by component. |
 | **BuildShip** | Command (use case) | *Evolves*: builds a ship **from a `ShipDesign`**: class and loadout come from its latest revision. Replaces the reserved term *BuildFromBlueprint*. |
-| **UpgradeShip** | Command (use case) | Bring a ship to the **latest revision of its own design**. |
-| **RetrofitShip** | Command (use case) | Switch a ship to **another design** of the same `ShipClass`. |
+| **RetrofitShip** | Command (use case) | Bring a ship to a design of the same `ShipClass`: its class is kept, its design reference, revision and `Loadout` are copied from the design. Covers both the **latest revision of its own design** (what Stellaris calls an *upgrade*) and **another design**. Same design and same revision: no effect (idempotent by construction). |
 | **DesignShip** | Command (use case) | Bring a new `ShipDesign` into existence. Also the end of the **custom** path: a ship composed component by component in the UI is a draft, which becomes a design on validation, before `BuildShip` uses it. |
 
 ### Hull layouts

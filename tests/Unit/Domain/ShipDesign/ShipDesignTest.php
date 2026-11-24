@@ -9,10 +9,8 @@ use App\Domain\Component\PowerConsumption;
 use App\Domain\Component\PowerOutput;
 use App\Domain\Ship\ShipClass;
 use App\Domain\ShipDesign\Component;
-use App\Domain\ShipDesign\ShipDesign;
-use App\Domain\ShipDesign\ShipDesignId;
-use App\Domain\ShipDesign\ShipDesignName;
 use App\Tests\Unit\Domain\ComponentModelTestHelper;
+use App\Tests\Unit\Domain\ShipDesignTestHelper;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
@@ -20,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 final class ShipDesignTest extends TestCase
 {
     use ComponentModelTestHelper;
+    use ShipDesignTestHelper;
 
     public function testADesignWithoutAReactorIsRejected(): void
     {
@@ -287,13 +286,5 @@ final class ShipDesignTest extends TestCase
         $design->revise($updatedComponents);
 
         self::assertSame(2, $design->getRevision()->getValue());
-    }
-
-    /**
-     * @param list<Component> $components
-     */
-    private static function drawWith(ShipClass $class, array $components, string $name = 'Default'): ShipDesign
-    {
-        return ShipDesign::draw(ShipDesignId::generate(), ShipDesignName::create($name), $class, $components);
     }
 }

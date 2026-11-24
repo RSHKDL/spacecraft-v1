@@ -42,6 +42,11 @@ final class ShipDesign
         $this->components = $components;
     }
 
+    public function getId(): ShipDesignId
+    {
+        return $this->id;
+    }
+
     /**
      * @return list<Component>
      */
