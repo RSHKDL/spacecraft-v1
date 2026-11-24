@@ -5,17 +5,31 @@ declare(strict_types=1);
 namespace App\Domain\Component;
 
 use App\Domain\Ship\ShipClass;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Entity]
 final class ComponentModel
 {
+    #[ORM\Column]
     private bool $discontinued = false;
 
+    // Stored as a plain column: the VO is rebuilt on read from the type.
+    #[ORM\Column]
+    private int $power;
+
     private function __construct(
+        #[ORM\Id]
+        #[ORM\Column(type: 'component_model_id', unique: true)]
         private readonly ComponentModelId $id,
+        #[ORM\Column(type: Types::STRING, enumType: ComponentType::class)]
         private readonly ComponentType $type,
+        #[ORM\Column(type: Types::JSONB, enumType: ShipClass::class)]
         private readonly array $shipClasses,
-        private readonly Power $power,
-    ) {}
+        Power $power,
+    ) {
+        $this->power = $power->getValue();
+    }
 
     /**
      * @param list<ShipClass> $shipClasses
@@ -72,6 +86,8 @@ final class ComponentModel
 
     public function getPower(): Power
     {
-        return $this->power;
+        return $this->type->suppliesPower()
+            ? PowerOutput::create($this->power)
+            : PowerConsumption::create($this->power);
     }
 }
