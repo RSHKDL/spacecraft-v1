@@ -23,7 +23,7 @@ final class ShipDesignTest extends TestCase
 
     public function testADesignWithoutAReactorIsRejected(): void
     {
-        $components = [self::createComponent(ComponentType::Weapon), self::createComponent(ComponentType::Weapon)];
+        $components = [self::createComponent(type: ComponentType::Weapon), self::createComponent(type: ComponentType::Weapon)];
 
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessageIs('A ship design must have a reactor component');
@@ -36,9 +36,9 @@ final class ShipDesignTest extends TestCase
     public function testADesignWithMoreThanOneUniqueComponentIsRejected(ComponentType $type): void
     {
         $components = [
-            self::createComponent(ComponentType::Reactor),
-            self::createComponent($type),
-            self::createComponent($type),
+            self::createComponent(type: ComponentType::Reactor),
+            self::createComponent(type: $type),
+            self::createComponent(type: $type),
         ];
 
         $this->expectException(\DomainException::class);
@@ -49,7 +49,7 @@ final class ShipDesignTest extends TestCase
 
     public function testADesignWithOnlyMandatoryComponentsIsAccepted(): void
     {
-        $reactorComponent = self::createComponent(ComponentType::Reactor);
+        $reactorComponent = self::createComponent(type: ComponentType::Reactor);
         $design = self::drawWith(ShipClass::Frigate, [$reactorComponent]);
 
         self::assertEquals([$reactorComponent], $design->getComponents());
@@ -63,11 +63,11 @@ final class ShipDesignTest extends TestCase
     ): void
     {
         $components = [
-            self::createComponent(ComponentType::Reactor),
+            self::createComponent(type: ComponentType::Reactor),
         ];
 
         for ($i = 0; $i < $limit + 1; $i++) {
-            $components[] = self::createComponent($componentType);
+            $components[] = self::createComponent(type: $componentType);
         }
 
         $this->expectException(\DomainException::class);
@@ -87,11 +87,11 @@ final class ShipDesignTest extends TestCase
     ): void
     {
         $components = [
-            self::createComponent(ComponentType::Reactor),
+            self::createComponent(type: ComponentType::Reactor),
         ];
 
         for ($i = 0; $i < $limit; $i++) {
-            $components[] = self::createComponent($componentType);
+            $components[] = self::createComponent(type: $componentType);
         }
 
         $design = self::drawWith($class, $components);
@@ -119,8 +119,8 @@ final class ShipDesignTest extends TestCase
     ): void
     {
         $components = [
-            self::createComponent(ComponentType::Reactor, [$shipClass]),
-            self::createComponent($componentType, $componentClasses),
+            self::createComponent(type: ComponentType::Reactor, shipClasses: [$shipClass]),
+            self::createComponent(type: $componentType, shipClasses: $componentClasses),
         ];
 
         $this->expectException(\DomainException::class);
@@ -167,6 +167,126 @@ final class ShipDesignTest extends TestCase
 
         self::assertSame(ShipClass::Frigate, $design->getClass());
         self::assertSame('Harbinger', $design->getName()->getValue());
+    }
+
+    public function testANewDesignIsAtRevisionOne(): void
+    {
+        $components = [
+            self::createComponent(type: ComponentType::Reactor),
+        ];
+
+        $design = self::drawWith(ShipClass::Frigate, $components);
+
+        self::assertSame(1, $design->getRevision()->getValue());
+    }
+
+    public function testARevisionReplacesTheComponentsAndIncrementsTheRevision(): void
+    {
+        $components = [
+            self::createComponent(type: ComponentType::Reactor),
+            self::createComponent(type: ComponentType::Weapon),
+        ];
+
+        $design = self::drawWith(ShipClass::Frigate, $components);
+
+        $updatedComponents = [
+            self::createComponent(type: ComponentType::Reactor),
+            self::createComponent(type: ComponentType::Shield),
+            self::createComponent(type: ComponentType::Auxiliary),
+        ];
+
+        $design->revise($updatedComponents);
+
+        self::assertSame(2, $design->getRevision()->getValue());
+        self::assertEquals($updatedComponents, $design->getComponents());
+    }
+
+    public function testARevisionWithoutAReactorIsRejected(): void
+    {
+        $components = [
+            self::createComponent(type: ComponentType::Reactor),
+        ];
+
+        $design = self::drawWith(ShipClass::Frigate, $components);
+
+        $updatedComponents = [
+            self::createComponent(type: ComponentType::Weapon),
+        ];
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessageIs('A ship design must have a reactor component');
+
+        $design->revise($updatedComponents);
+    }
+
+    public function testARevisionWithTheSameComponentModelsLeavesTheRevisionUnchanged(): void
+    {
+        $model = self::releaseModel(ComponentType::Reactor);
+        $design = self::drawWith(ShipClass::Frigate, [Component::createFrom($model)]);
+
+        $design->revise([Component::createFrom($model)]);
+
+        self::assertSame(1, $design->getRevision()->getValue());
+    }
+
+    public function testARevisionWithTheSameComponentModelsInAnotherOrderLeavesTheRevisionUnchanged(): void
+    {
+        $reactorModel = self::releaseModel(ComponentType::Reactor);
+        $weaponModel = self::releaseModel(ComponentType::Weapon);
+
+        $design = self::drawWith(ShipClass::Frigate, [
+            Component::createFrom($reactorModel),
+            Component::createFrom($weaponModel),
+        ]);
+
+        $design->revise([
+            Component::createFrom($weaponModel),
+            Component::createFrom($reactorModel),
+        ]);
+
+        self::assertSame(1, $design->getRevision()->getValue());
+    }
+
+    public function testARevisionRemovingOneOfTwoComponentsOfTheSameModelIncrementsTheRevision(): void
+    {
+        $reactorModel = self::releaseModel(ComponentType::Reactor);
+        $weaponModel = self::releaseModel(ComponentType::Weapon);
+
+        $design = self::drawWith(ShipClass::Frigate, [
+            Component::createFrom($reactorModel),
+            Component::createFrom($weaponModel),
+            Component::createFrom($weaponModel),
+        ]);
+
+        $design->revise([
+            Component::createFrom($reactorModel),
+            Component::createFrom($weaponModel),
+        ]);
+
+        self::assertSame(2, $design->getRevision()->getValue());
+    }
+
+    public function testARevisionSwappingAModelForAnotherWithTheSameStatsIncrementsTheRevision(): void
+    {
+        $weaponModel = self::releaseModel(ComponentType::Weapon);
+        $aReactorModel = self::releaseModel(ComponentType::Reactor, power: PowerOutput::create(75));
+        $anotherReactorModel = self::releaseModel(ComponentType::Reactor, power: PowerOutput::create(75));
+
+        $components = [
+            Component::createFrom($weaponModel),
+            Component::createFrom($aReactorModel),
+        ];
+
+        $design = self::drawWith(ShipClass::Frigate, $components);
+
+        $updatedComponents = [
+            Component::createFrom($weaponModel),
+            Component::createFrom($anotherReactorModel),
+        ];
+
+        $design->revise($updatedComponents);
+
+        self::assertSame(2, $design->getRevision()->getValue());
     }
 
     /**

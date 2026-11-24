@@ -52,6 +52,11 @@ final class ComponentModel
         return $this->discontinued;
     }
 
+    public function getId(): ComponentModelId
+    {
+        return $this->id;
+    }
+
     public function getType(): ComponentType
     {
         return $this->type;
