@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Fleet;
 
+use App\Domain\Component\ComponentType;
 use App\Domain\Fleet\Fleet;
 use App\Domain\Fleet\FleetId;
 use App\Domain\Fleet\FleetName;
@@ -12,10 +13,15 @@ use App\Domain\Fleet\ShipAvailability;
 use App\Domain\Ship\Ship;
 use App\Domain\Ship\ShipClass;
 use App\Domain\Ship\ShipId;
+use App\Tests\Unit\Domain\ComponentModelTestHelper;
+use App\Tests\Unit\Domain\ShipDesignTestHelper;
 use PHPUnit\Framework\TestCase;
 
 final class ShipAvailabilityTest extends TestCase
 {
+    use ComponentModelTestHelper;
+    use ShipDesignTestHelper;
+
     public function testAlreadyAssignedShipCannotBeAssignedToAnotherFleet(): void
     {
         $assignedShipId = ShipId::generate();
@@ -49,8 +55,10 @@ final class ShipAvailabilityTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        $cruiser = Ship::build(ShipId::generate(), ShipClass::Cruiser);
-        $flagShip = Ship::build(ShipId::generate(), ShipClass::Destroyer);
+        $design = self::drawWith(ShipClass::Cruiser, [self::createComponent(ComponentType::Reactor)]);
+
+        $cruiser = Ship::build(ShipId::generate(), $design);
+        $flagShip = Ship::build(ShipId::generate(), $design);
         $fleet = Fleet::form(
             FleetId::generate(),
             FleetName::create('1st Fleet'),

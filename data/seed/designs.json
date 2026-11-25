@@ -1,0 +1,36 @@
+{
+    "01a2138e-4c40-7d9e-825b-e75b16eefd5f": {
+        "name": "Harbinger",
+        "components": [
+            "01a21380-6e81-7699-bb6e-273cbdb429e9",
+            "01a21380-9996-779b-9134-fb7126e95ac7",
+            "01a21380-9996-779b-9134-fb7126e95ac7",
+            "01a21380-9996-779b-9134-fb7126e95ac7"
+        ],
+        "for": "battleship"
+    },
+    "01a2138e-4c43-7084-9340-4a5104735610": {
+        "name": "Vindicator",
+        "components": [
+            "01a21380-6e81-7699-bb6e-273cbdb429e9",
+            "01a21380-9996-779b-9134-fb7126e95ac7",
+            "01a21380-9996-779b-9134-fb7126e95ac7"
+        ],
+        "for": "cruiser"
+    },
+    "01a2138e-4c45-7205-ac41-5923fece1230": {
+        "name": "Warmonger",
+        "components": ["01a21375-82d8-773e-b214-3f341c987a2e", "01a21380-9996-779b-9134-fb7126e95ac7"],
+        "for": "destroyer"
+    },
+    "01a2138e-4c47-7339-890a-75cebdf6a54e": {
+        "name": "Hoplite",
+        "components": ["01a21375-82d8-773e-b214-3f341c987a2e", "01a21380-9996-779b-9134-fb7126e95ac7"],
+        "for": "frigate"
+    },
+    "01a2138e-70d5-7bc9-8965-24e9c2130eef": {
+        "name": "Agamemnon",
+        "components": ["01a21375-82d8-773e-b214-3f341c987a2e", "01a21380-9996-779b-9134-fb7126e95ac7"],
+        "for": "corvette"
+    }
+}

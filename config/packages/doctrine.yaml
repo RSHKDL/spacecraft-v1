@@ -14,6 +14,7 @@ doctrine:
             component_model_id: App\Infrastructure\Component\Doctrine\ComponentModelIdType
             ship_design_id: App\Infrastructure\ShipDesign\Doctrine\ShipDesignIdType
             components: App\Infrastructure\ShipDesign\Doctrine\ComponentsType
+            loadout: App\Infrastructure\Ship\Doctrine\LoadoutType
 
     orm:
         validate_xml_mapping: true

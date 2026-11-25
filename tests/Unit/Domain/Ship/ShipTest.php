@@ -20,7 +20,8 @@ final class ShipTest extends TestCase
 
     public function testANewlyBuiltShipStartsWithAFullHullForItsClass(): void
     {
-        $ship = Ship::build(ShipId::generate(), ShipClass::Corvette);
+        $design = self::drawWith(ShipClass::Corvette, [self::createComponent(ComponentType::Reactor)]);
+        $ship = Ship::build(ShipId::generate(), $design);
 
         self::assertSame(100, $ship->hull->getCurrent());
         self::assertSame(100, $ship->hull->getMax());
@@ -28,7 +29,8 @@ final class ShipTest extends TestCase
 
     public function testAShipCanBeChristenedWithAName(): void
     {
-        $ship = Ship::build(ShipId::generate(), ShipClass::Cruiser);
+        $design = self::drawWith(ShipClass::Cruiser, [self::createComponent(ComponentType::Reactor)]);
+        $ship = Ship::build(ShipId::generate(), $design);
         $ship->christen(ShipName::create('USS Enterprise'));
 
         self::assertSame('USS Enterprise', $ship->getName()->getValue());
@@ -36,7 +38,8 @@ final class ShipTest extends TestCase
 
     public function testAShipCannotBeChristenedTwice(): void
     {
-        $ship = Ship::build(ShipId::generate(), ShipClass::Cruiser);
+        $design = self::drawWith(ShipClass::Cruiser, [self::createComponent(ComponentType::Reactor)]);
+        $ship = Ship::build(ShipId::generate(), $design);
         $ship->christen(ShipName::create('USS Enterprise'));
 
         $this->expectException(\DomainException::class);
@@ -53,7 +56,7 @@ final class ShipTest extends TestCase
         ];
 
         $design = self::drawWith(ShipClass::Frigate, $components);
-        $ship = Ship::buildFrom(ShipId::generate(), $design);
+        $ship = Ship::build(ShipId::generate(), $design);
 
         self::assertSame(ShipClass::Frigate, $ship->getClass());
         self::assertSame(1, $ship->getDesignRevision()->getValue());
@@ -70,7 +73,7 @@ final class ShipTest extends TestCase
         ];
 
         $design = self::drawWith(ShipClass::Frigate, $components);
-        $ship = Ship::buildFrom(ShipId::generate(), $design);
+        $ship = Ship::build(ShipId::generate(), $design);
 
         $updatedComponents = [
             self::createComponent(ComponentType::Reactor),
@@ -93,7 +96,7 @@ final class ShipTest extends TestCase
         ];
 
         $frigateDesign = self::drawWith(ShipClass::Frigate, $frigateComponents);
-        $ship = Ship::buildFrom(ShipId::generate(), $frigateDesign);
+        $ship = Ship::build(ShipId::generate(), $frigateDesign);
 
         $destroyerComponents = [
             self::createComponent(ComponentType::Reactor),
@@ -117,7 +120,7 @@ final class ShipTest extends TestCase
         ];
 
         $design = self::drawWith(ShipClass::Frigate, $components);
-        $ship = Ship::buildFrom(ShipId::generate(), $design);
+        $ship = Ship::build(ShipId::generate(), $design);
 
         $newDesignComponents = [
             self::createComponent(ComponentType::Reactor),

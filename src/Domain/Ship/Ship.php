@@ -23,8 +23,13 @@ final class Ship
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $name = null;
 
+    #[ORM\Column(type: 'ship_design_id')]
     private ShipDesignId $designId;
+
+    #[ORM\Embedded(columnPrefix: 'design_')]
     private ShipDesignRevision $designRevision;
+
+    #[ORM\Column(type: 'loadout')]
     private Loadout $loadout;
 
     private function __construct(
@@ -35,18 +40,7 @@ final class Ship
         private(set) readonly ShipClass $class,
     ) {}
 
-    /**
-     * @deprecated Will be replaced by buildFrom()
-     */
-    public static function build(ShipId $id, ShipClass $class): self
-    {
-        $ship = new self($id, $class);
-        $ship->hull = ShipHull::createNew($class->baseHull());
-
-        return $ship;
-    }
-
-    public static function buildFrom(ShipId $id, ShipDesign $design): self
+    public static function build(ShipId $id, ShipDesign $design): self
     {
         $class = $design->getClass();
         $ship = new self($id, $class);

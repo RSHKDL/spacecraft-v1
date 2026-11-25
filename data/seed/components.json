@@ -1,0 +1,38 @@
+{
+    "01a21375-82d8-773e-b214-3f341c987a2e": {
+        "type": "reactor",
+        "name": "Fusion",
+        "power": 90,
+        "for": ["corvette", "frigate", "destroyer"]
+    },
+    "01a2137c-2a94-70c8-9313-78b3e5e4d139": {
+        "type": "reactor",
+        "name": "Large Fusion",
+        "power": 180,
+        "for": ["cruiser", "battleship"]
+    },
+    "01a2137c-4c6e-7035-bdd5-728dbb1dddf2": {
+        "type": "reactor",
+        "name": "Antimatter",
+        "power": 180,
+        "for": ["corvette", "frigate", "destroyer", "cruiser", "battleship"]
+    },
+    "01a21380-6e81-7699-bb6e-273cbdb429e9": {
+        "type": "reactor",
+        "name": "Cold Fusion",
+        "power": 360,
+        "for": ["cruiser", "battleship"]
+    },
+    "01a21380-9996-779b-9134-fb7126e95ac7": {
+        "type": "weapon",
+        "name": "Fusion missiles",
+        "power": 80,
+        "for": ["corvette", "frigate", "destroyer", "cruiser", "battleship"]
+    },
+    "01a2137c-711c-77fe-82c1-c3ba81707258": {
+        "type": "weapon",
+        "name": "Fusion swarmer missiles",
+        "power": 120,
+        "for": ["frigate", "destroyer", "cruiser"]
+    }
+}

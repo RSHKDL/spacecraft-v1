@@ -16,10 +16,6 @@ use Doctrine\ORM\OptimisticLockException;
 
 /**
  * Write-path seam of the ComponentModel mapping.
- *
- * Goes through the EntityManager rather than a repository: no handler consumes
- * one yet, so the test container would have removed it. The repository arrives
- * with its first command.
  */
 final class ComponentModelMappingTest extends IntegrationTestCase
 {

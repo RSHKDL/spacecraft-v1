@@ -21,9 +21,6 @@ use Doctrine\ORM\OptimisticLockException;
 
 /**
  * Write-path seam of the ShipDesign mapping.
- *
- * Goes through the EntityManager rather than a repository: no handler consumes
- * one yet, so the test container would have removed it.
  */
 final class ShipDesignMappingTest extends IntegrationTestCase
 {
