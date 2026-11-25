@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\Domain\Fleet;
 
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping\Column;
-use Doctrine\ORM\Mapping\Embeddable;
+use Doctrine\ORM\Mapping as ORM;
 
-#[Embeddable]
+#[ORM\Embeddable]
 final readonly class FleetName
 {
     public const int MAX_LENGTH = 70;
 
-    #[Column(type: Types::TEXT)]
+    #[ORM\Column(name: 'name', type: Types::TEXT)]
     private string $value;
 
     private function __construct(

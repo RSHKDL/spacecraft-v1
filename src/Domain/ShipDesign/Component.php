@@ -15,13 +15,35 @@ final readonly class Component
     private function __construct(
         private ComponentModelId $modelId,
         private ComponentType $type,
-        private array $shipClasses,
+        private array $supportedShipClasses,
         private Power $power,
     ) {}
 
     public static function createFrom(ComponentModel $model): self
     {
         return new self($model->getId(), $model->getType(), $model->getSupportedShipClasses(), $model->getPower());
+    }
+
+    /**
+     * Rebuilds a component from storage, without its catalog model: the copy was
+     * made when the component was fitted, and the catalog is never read again.
+     * Reserved for persistence; the domain uses createFrom().
+     *
+     * @param list<ShipClass> $supportedShipClasses
+     */
+    public static function createFromStorage(
+        ComponentModelId $modelId,
+        ComponentType $type,
+        array $supportedShipClasses,
+        Power $power,
+    ): self
+    {
+        return new self(
+            $modelId,
+            $type,
+            $supportedShipClasses,
+            $power,
+        );
     }
 
     public function getModelId(): ComponentModelId
@@ -39,7 +61,7 @@ final readonly class Component
      */
     public function getSupportedShipClasses(): array
     {
-        return $this->shipClasses;
+        return $this->supportedShipClasses;
     }
 
     public function getPower(): Power

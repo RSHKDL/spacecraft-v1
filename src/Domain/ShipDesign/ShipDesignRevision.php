@@ -4,9 +4,14 @@ declare(strict_types=1);
 
 namespace App\Domain\ShipDesign;
 
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
+
+#[ORM\Embeddable]
 final readonly class ShipDesignRevision
 {
     private function __construct(
+        #[ORM\Column(name: 'revision', type: Types::INTEGER)]
         private int $value
     ) {}
 

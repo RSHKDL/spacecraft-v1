@@ -6,14 +6,23 @@ namespace App\Domain\ShipDesign;
 
 use App\Domain\Component\ComponentType;
 use App\Domain\Ship\ShipClass;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as ORM;
 
+#[ORM\Entity]
 final class ShipDesign
 {
     private function __construct(
+        #[ORM\Id]
+        #[ORM\Column(type: 'ship_design_id', unique: true)]
         private readonly ShipDesignId $id,
+        #[ORM\Embedded(columnPrefix: false)]
         private readonly ShipDesignName $name,
+        #[ORM\Column(type: Types::STRING, enumType: ShipClass::class)]
         private readonly ShipClass $class,
+        #[ORM\Embedded(columnPrefix: false)]
         private ShipDesignRevision $revision,
+        #[ORM\Column(type: 'components')]
         private array $components,
     ) {}
 

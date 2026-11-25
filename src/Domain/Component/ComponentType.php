@@ -28,4 +28,11 @@ enum ComponentType: string
             default => false,
         };
     }
+
+    public function powerOf(int $value): Power
+    {
+        return $this->suppliesPower()
+            ? PowerOutput::create($value)
+            : PowerConsumption::create($value);
+    }
 }

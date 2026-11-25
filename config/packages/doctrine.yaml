@@ -12,6 +12,8 @@ doctrine:
             ship_id: App\Infrastructure\Ship\Doctrine\ShipIdType
             fleet_id: App\Infrastructure\Fleet\Doctrine\FleetIdType
             component_model_id: App\Infrastructure\Component\Doctrine\ComponentModelIdType
+            ship_design_id: App\Infrastructure\ShipDesign\Doctrine\ShipDesignIdType
+            components: App\Infrastructure\ShipDesign\Doctrine\ComponentsType
 
     orm:
         validate_xml_mapping: true

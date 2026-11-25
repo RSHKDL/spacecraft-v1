@@ -27,7 +27,7 @@ final class Fleet
         #[ORM\Id]
         #[ORM\Column(type: 'fleet_id', unique: true)]
         private(set) readonly FleetId $id,
-        #[ORM\Embedded]
+        #[ORM\Embedded(columnPrefix: false)]
         private readonly FleetName $name,
         #[ORM\Column(type: 'ship_id', nullable: true)]
         private ?ShipId $flagshipId = null,

@@ -86,8 +86,6 @@ final class ComponentModel
 
     public function getPower(): Power
     {
-        return $this->type->suppliesPower()
-            ? PowerOutput::create($this->power)
-            : PowerConsumption::create($this->power);
+        return $this->type->powerOf($this->power);
     }
 }
