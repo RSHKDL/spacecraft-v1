@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Http\Ship;
 
+use App\Application\Query\QueryBus;
+use App\Application\ShipDesign\Query\ListShipDesigns;
+use App\Application\ShipDesign\Query\ShipDesignView;
 use App\Infrastructure\Http\Ship\Form\BuildShipType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -18,6 +21,7 @@ final class BuildShipController extends AbstractController
     public function __construct(
         #[Autowire(service: 'command.bus')]
         private readonly MessageBusInterface $commandBus,
+        private readonly QueryBus $queryBus,
     ) {}
 
     /**
@@ -26,7 +30,9 @@ final class BuildShipController extends AbstractController
     #[Route('/ships/new', name: 'ship_build', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
-        $form = $this->createForm(BuildShipType::class);
+        /** @var ShipDesignView[] $designs */
+        $designs = $this->queryBus->ask(new ListShipDesigns());
+        $form = $this->createForm(BuildShipType::class, options: ['designs' => $designs]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

@@ -21,7 +21,9 @@ ship:
         empty: No ships
     build:
         title: Build a new ship
-        label_class: Ship class
+        label_design: From an existing design
+        design_choice: '{name}-class {class}'
+        select_design_placeholder: Please choose a design.
         success: Ship built successfully
     hull_status:
         intact: Intact
