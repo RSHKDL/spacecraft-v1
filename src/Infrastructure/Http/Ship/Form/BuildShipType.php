@@ -12,6 +12,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatableMessage;
 
+/**
+ * @extends AbstractType<BuildShipDto>
+ */
 final class BuildShipType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
@@ -45,7 +48,7 @@ final class BuildShipType extends AbstractType
     }
 
     /**
-     * @param ShipDesignView[] $designViews
+     * @param list<ShipDesignView> $designViews
      * @return array<string, ShipDesignView>
      */
     private function designsById(array $designViews): array

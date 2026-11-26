@@ -32,6 +32,9 @@ final class InMemoryShipRepository implements ShipRepository
         return $ship;
     }
 
+    /**
+     * @return list<Ship>
+     */
     public function getShips(): array
     {
         return array_values($this->ships);

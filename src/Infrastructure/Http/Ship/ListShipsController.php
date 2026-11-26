@@ -20,7 +20,7 @@ final class ListShipsController extends AbstractController
     #[Route('/ships', name: 'ship_list', methods: ['GET'])]
     public function __invoke(): Response
     {
-        /** @var ShipView[] $ships */
+        /** @var list<ShipView> $ships */
         $ships = $this->queryBus->ask(new ListShips());
 
         return $this->render('ship/list.html.twig', [

@@ -48,9 +48,11 @@ trait FleetTestHelper
         }
     }
 
+    /**
+     * @param list<FleetListView> $views
+     */
     protected static function fleetViewOf(FleetId $fleetId, array $views): FleetListView
     {
-        /** @var FleetListView $view */
         foreach ($views as $view) {
             if ($view->id->equals($fleetId)) {
                 return $view;

@@ -6,6 +6,6 @@ namespace App\Application\ShipDesign\Query;
 
 interface ShipDesignFinder
 {
-    /** @return ShipDesignView[] */
+    /** @return list<ShipDesignView> */
     public function findAll(): array;
 }

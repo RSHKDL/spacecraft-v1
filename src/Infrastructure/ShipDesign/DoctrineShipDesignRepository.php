@@ -43,7 +43,7 @@ final readonly class DoctrineShipDesignRepository implements ShipDesignRepositor
         return $shipDesign;
     }
 
-    /** @return ShipDesignView[] */
+    /** @return list<ShipDesignView> */
     public function findAll(): array
     {
         $qb = $this->designQueryBuilder()

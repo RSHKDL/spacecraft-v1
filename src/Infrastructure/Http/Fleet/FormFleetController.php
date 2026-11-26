@@ -30,7 +30,7 @@ final class FormFleetController extends AbstractController
     #[Route('/fleets/new', name: 'fleet_form', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
-        /** @var ShipView[] $ships */
+        /** @var list<ShipView> $ships */
         $ships = $this->queryBus->ask(new ListAvailableShips());
         $form = $this->createForm(FormFleetType::class, null, ['ships' => $ships]);
         $form->handleRequest($request);

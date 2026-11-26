@@ -13,6 +13,9 @@ final readonly class ListFleetsHandler
         private FleetFinder $finder
     ) {}
 
+    /**
+     * @return list<FleetListView>
+     */
     public function __invoke(ListFleets $query): array
     {
         return $this->finder->findAll();

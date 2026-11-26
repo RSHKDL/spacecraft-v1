@@ -13,6 +13,9 @@ final readonly class ListShipDesignsHandler
         private ShipDesignFinder $finder
     ) {}
 
+    /**
+     * @return list<ShipDesignView>
+     */
     public function __invoke(ListShipDesigns $query): array
     {
         return $this->finder->findAll();

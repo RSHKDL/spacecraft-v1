@@ -13,6 +13,9 @@ final readonly class ListShipsHandler
         private ShipFinder $finder
     ) {}
 
+    /**
+     * @return list<ShipView>
+     */
     public function __invoke(ListShips $query): array
     {
         return $this->finder->findAll();

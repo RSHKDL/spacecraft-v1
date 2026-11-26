@@ -20,7 +20,7 @@ final class ListFleetsController extends AbstractController
     #[Route('/fleets', name: 'fleet_list', methods: ['GET'])]
     public function __invoke(): Response
     {
-        /** @var FleetListView[] $fleets */
+        /** @var list<FleetListView> $fleets */
         $fleets = $this->queryBus->ask(new ListFleets());
 
         return $this->render('fleet/list.html.twig', [

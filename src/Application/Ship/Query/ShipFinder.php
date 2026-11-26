@@ -8,9 +8,9 @@ use App\Domain\Ship\ShipId;
 
 interface ShipFinder
 {
-    /** @return ShipView[] */
+    /** @return list<ShipView> */
     public function findAll(): array;
-    /** @return ShipView[] */
+    /** @return list<ShipView> */
     public function findAvailable(): array;
     public function findById(ShipId $id): ?ShipView;
 }

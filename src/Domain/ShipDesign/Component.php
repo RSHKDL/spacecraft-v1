@@ -15,6 +15,7 @@ final readonly class Component
     private function __construct(
         private ComponentModelId $modelId,
         private ComponentType $type,
+        /** @var list<ShipClass> */
         private array $supportedShipClasses,
         private Power $power,
     ) {}

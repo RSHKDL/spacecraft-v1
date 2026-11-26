@@ -8,7 +8,7 @@ use Symfony\Component\Uid\Uuid;
 
 abstract readonly class Identifier
 {
-    private function __construct(
+    final private function __construct(
         protected Uuid $value,
     ) {}
 

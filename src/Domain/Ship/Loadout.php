@@ -9,6 +9,7 @@ use App\Domain\ShipDesign\Component;
 final readonly class Loadout
 {
     private function __construct(
+        /** @var list<Component> */
         private array $components,
     ) {}
 

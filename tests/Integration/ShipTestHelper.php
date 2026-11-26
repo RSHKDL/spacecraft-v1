@@ -29,9 +29,11 @@ trait ShipTestHelper
         return $shipId;
     }
 
+    /**
+     * @param list<ShipView> $views
+     */
     protected static function shipViewOf(ShipId $shipId, array $views): ShipView
     {
-        /** @var ShipView $view */
         foreach ($views as $view) {
             if ($view->id->equals($shipId)) {
                 return $view;

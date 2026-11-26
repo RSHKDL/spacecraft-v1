@@ -13,7 +13,7 @@ final readonly class FleetView
         public FleetId $id,
         public string $name,
         public ?ShipId $flagshipId,
-        /** @var FleetShipView[] $ships  */
+        /** @var list<FleetShipView> $ships  */
         public array $ships,
     ) {}
 }

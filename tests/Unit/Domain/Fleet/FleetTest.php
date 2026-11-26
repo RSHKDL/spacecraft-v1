@@ -163,6 +163,9 @@ final class FleetTest extends TestCase
         $fleet->assign(ShipId::fromString($aShipId->getValue()));
     }
 
+    /**
+     * @param list<ShipId> $shipIds
+     */
     private static function formFleet(array $shipIds, ShipId $flagshipId): Fleet
     {
         return Fleet::form(

@@ -6,7 +6,6 @@ namespace App\Tests\Integration;
 
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
 /**
@@ -54,8 +53,6 @@ abstract class IntegrationTestCase extends KernelTestCase
         $tables = [];
 
         foreach ($this->entityManager->getMetadataFactory()->getAllMetadata() as $metadata) {
-            \assert($metadata instanceof ClassMetadata);
-
             if ($metadata->isEmbeddedClass || $metadata->isMappedSuperclass) {
                 continue;
             }

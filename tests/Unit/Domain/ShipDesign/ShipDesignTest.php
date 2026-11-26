@@ -98,6 +98,9 @@ final class ShipDesignTest extends TestCase
         self::assertEquals($components, $design->getComponents());
     }
 
+    /**
+     * @return iterable<string, array{ShipClass, ComponentType, int}>
+     */
     public static function slotsLimitProvider(): iterable
     {
         yield 'frigate weapons limit' => [ShipClass::Frigate, ComponentType::Weapon, 3];

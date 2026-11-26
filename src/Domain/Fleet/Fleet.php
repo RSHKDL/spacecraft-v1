@@ -36,7 +36,7 @@ final class Fleet
     }
 
     /**
-     * @param ShipId[] $shipIds
+     * @param list<ShipId> $shipIds
      */
     public static function form(
         FleetId $fleetId,
@@ -103,7 +103,7 @@ final class Fleet
     }
 
     /**
-     * @return ShipId[]
+     * @return list<ShipId>
      */
     public function getShipIds(): array
     {

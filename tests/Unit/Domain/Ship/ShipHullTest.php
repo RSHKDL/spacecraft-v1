@@ -27,6 +27,9 @@ final class ShipHullTest extends TestCase
         ShipHull::create($current, $max);
     }
 
+    /**
+     * @return iterable<string, array{int}>
+     */
     public static function hullProvider(): iterable
     {
         yield 'current > max' => [150, 100];
@@ -42,6 +45,9 @@ final class ShipHullTest extends TestCase
         self::assertSame($expected, $hull->getStatus());
     }
 
+    /**
+     * @return iterable<string, array{int, int, HullStatus}>
+     */
     public static function hullStatusProvider(): iterable
     {
         yield 'hull is full' => [100, 100, HullStatus::Intact];

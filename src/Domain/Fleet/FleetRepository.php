@@ -13,8 +13,8 @@ interface FleetRepository
     public function get(FleetId $id): Fleet;
 
     /**
-     * @param ShipId[] $shipIds
-     * @return ShipId[] Ids of ships already serving in a fleet
+     * @param list<ShipId> $shipIds
+     * @return list<ShipId> Ids of ships already serving in a fleet
      */
     public function findAlreadyAssignedShipIds(array $shipIds): array;
 }

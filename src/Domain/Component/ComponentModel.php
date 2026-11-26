@@ -24,6 +24,9 @@ final class ComponentModel
         private readonly ComponentModelId $id,
         #[ORM\Column(type: Types::STRING, enumType: ComponentType::class)]
         private readonly ComponentType $type,
+        /**
+         * @var list<ShipClass>
+         */
         #[ORM\Column(type: Types::JSONB, enumType: ShipClass::class)]
         private readonly array $shipClasses,
         Power $power,

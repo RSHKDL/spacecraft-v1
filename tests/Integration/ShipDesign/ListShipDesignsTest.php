@@ -90,9 +90,11 @@ final class ListShipDesignsTest extends IntegrationTestCase
         self::getContainer()->get(ShipDesignRepository::class)->save($design);
     }
 
+    /**
+     * @param list<ShipDesignView> $views
+     */
     private static function designViewOf(ShipDesignId $designId, array $views): ShipDesignView
     {
-        /** @var ShipDesignView $view */
         foreach ($views as $view) {
             if ($view->id->equals($designId)) {
                 return $view;

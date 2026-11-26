@@ -25,6 +25,9 @@ final class FleetNameTest extends TestCase
         FleetName::create($name);
     }
 
+    /**
+     * @return iterable<string, array{string}>
+     */
     public static function invalidNameProvider(): iterable
     {
         yield 'empty name' => [''];
@@ -38,6 +41,9 @@ final class FleetNameTest extends TestCase
         self::assertSame($expected, FleetName::create($name)->getValue());
     }
 
+    /**
+     * @return iterable<string, array{string, string}>
+     */
     public static function validNameProvider(): iterable
     {
         yield '70 chars ASCII' => [str_repeat('a', 70), str_repeat('a', 70)];

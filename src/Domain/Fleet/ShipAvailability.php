@@ -12,6 +12,9 @@ final readonly class ShipAvailability
         private FleetRepository $repository,
     ) {}
 
+    /**
+     * @param list<ShipId> $shipIds
+     */
     public function ensureUnassigned(array $shipIds, ?Fleet $fleetToJoin = null): void
     {
         $candidates = null === $fleetToJoin

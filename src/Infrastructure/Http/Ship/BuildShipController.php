@@ -30,7 +30,7 @@ final class BuildShipController extends AbstractController
     #[Route('/ships/new', name: 'ship_build', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
-        /** @var ShipDesignView[] $designs */
+        /** @var list<ShipDesignView> $designs */
         $designs = $this->queryBus->ask(new ListShipDesigns());
         $form = $this->createForm(BuildShipType::class, options: ['designs' => $designs]);
         $form->handleRequest($request);

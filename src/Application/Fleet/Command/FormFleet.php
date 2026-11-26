@@ -13,7 +13,7 @@ final class FormFleet
     public function __construct(
         public FleetId $fleetId,
         public FleetName $fleetName,
-        /** @var ShipId[] */
+        /** @var list<ShipId> */
         public array $shipIds,
         public ShipId $flagshipId,
     ) {}

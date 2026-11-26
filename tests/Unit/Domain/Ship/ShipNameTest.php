@@ -25,6 +25,9 @@ final class ShipNameTest extends TestCase
         ShipName::create($name);
     }
 
+    /**
+     * @return iterable<string, array{string}>
+     */
     public static function nameProvider(): iterable
     {
         yield 'empty name' => [''];

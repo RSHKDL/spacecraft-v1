@@ -31,9 +31,4 @@ final class InMemoryShipDesignRepository implements ShipDesignRepository
 
         return $shipDesign;
     }
-
-    public function getShipDesigns(): array
-    {
-        return array_values($this->shipDesigns);
-    }
 }

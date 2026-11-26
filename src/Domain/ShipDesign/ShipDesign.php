@@ -22,6 +22,7 @@ final class ShipDesign
         private readonly ShipClass $class,
         #[ORM\Embedded(columnPrefix: false)]
         private ShipDesignRevision $revision,
+        /** @var list<Component> */
         #[ORM\Column(type: 'components')]
         private array $components,
     ) {}
