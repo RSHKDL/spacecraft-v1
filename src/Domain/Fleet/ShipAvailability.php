@@ -19,7 +19,7 @@ final readonly class ShipAvailability
     {
         $candidates = null === $fleetToJoin
             ? $shipIds
-            : array_filter($shipIds, static fn (ShipId $shipId): bool => !$fleetToJoin->hasShip($shipId));
+            : array_values(array_filter($shipIds, static fn (ShipId $shipId): bool => !$fleetToJoin->hasShip($shipId)));
 
         $assignedShipIds = $this->repository->findAlreadyAssignedShipIds($candidates);
 

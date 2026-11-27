@@ -20,6 +20,7 @@ use App\Domain\ShipDesign\ShipDesign;
 use App\Domain\ShipDesign\ShipDesignId;
 use App\Domain\ShipDesign\ShipDesignName;
 use App\Domain\ShipDesign\ShipDesignRepository;
+use App\Infrastructure\Json\JsonReader;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\ORM\EntityManagerInterface;
@@ -123,7 +124,10 @@ final readonly class SeedCommand
      * The ids are pinned in the file rather than generated: the URLs of the
      * pages built against this dataset then survive a `--purge`.
      *
-     * @return array<string, array<string, mixed>>
+     * Only the outer shape is checked here; each entry's fields are read
+     * through JsonReader where they are used.
+     *
+     * @return array<string, array<mixed>>
      *
      * @throws JsonException
      */
@@ -131,7 +135,11 @@ final readonly class SeedCommand
     {
         $json = $this->filesystem->readFile(sprintf('%s/%s.json', $this->seedDir, $name));
 
-        return json_decode($json, true, flags: \JSON_THROW_ON_ERROR);
+        try {
+            return JsonReader::readObjectMap(json_decode($json, true, flags: \JSON_THROW_ON_ERROR));
+        } catch (\UnexpectedValueException $exception) {
+            throw new \UnexpectedValueException(sprintf('%s.json: %s', $name, $exception->getMessage()), previous: $exception);
+        }
     }
 
     /**
@@ -151,13 +159,13 @@ final readonly class SeedCommand
         foreach ($this->readSeedFile('components') as $id => $data) {
             // Value objects are built here, at the boundary: a typo in the JSON
             // is rejected before anything reaches the domain.
-            $type = ComponentType::from($data['type']);
+            $type = ComponentType::from(JsonReader::readString($data, 'type'));
 
             $model = ComponentModel::release(
                 ComponentModelId::fromString($id),
                 $type,
-                array_map(ShipClass::from(...), $data['for']),
-                $type->powerOf($data['power']),
+                array_map(ShipClass::from(...), JsonReader::readStringList($data, 'for')),
+                $type->powerOf(JsonReader::readInt($data, 'power')),
             );
 
             $this->entityManager->persist($model);
@@ -186,9 +194,9 @@ final readonly class SeedCommand
         foreach ($this->readSeedFile('designs') as $id => $data) {
             $design = ShipDesign::draw(
                 ShipDesignId::fromString($id),
-                ShipDesignName::create($data['name']),
-                ShipClass::from($data['for']),
-                array_map($resolve, $data['components']),
+                ShipDesignName::create(JsonReader::readString($data, 'name')),
+                ShipClass::from(JsonReader::readString($data, 'for')),
+                array_map($resolve, JsonReader::readStringList($data, 'components')),
             );
 
             $this->shipDesignRepository->save($design);
@@ -211,13 +219,16 @@ final readonly class SeedCommand
 
         foreach ($this->readSeedFile('ships') as $id => $data) {
             $shipId = ShipId::fromString($id);
-            $designId = $knownDesignIds[$data['design']]
-                ?? throw new \DomainException(sprintf('Unknown ship design id "%s" in ships.json.', $data['design']));
+            $design = JsonReader::readString($data, 'design');
+            $designId = $knownDesignIds[$design]
+                ?? throw new \DomainException(sprintf('Unknown ship design id "%s" in ships.json.', $design));
 
             $this->commandBus->dispatch(new BuildShip($shipId, $designId));
 
-            if (isset($data['name'])) {
-                $this->commandBus->dispatch(new ChristenShip($shipId, ShipName::create($data['name'])));
+            $name = JsonReader::readOptionalString($data, 'name');
+
+            if (null !== $name) {
+                $this->commandBus->dispatch(new ChristenShip($shipId, ShipName::create($name)));
             }
 
             $shipIds[$shipId->getValue()] = $shipId;
@@ -245,9 +256,9 @@ final readonly class SeedCommand
             $fleetId = FleetId::fromString($id);
             // Value objects are built here, at the boundary: a typo in the JSON
             // is rejected before any command reaches the domain.
-            $fleetName = FleetName::create($data['name']);
-            $flagshipId = $resolve($data['flagshipId']);
-            $shipIds = [$flagshipId, ...array_map($resolve, $data['otherShipsId'])];
+            $fleetName = FleetName::create(JsonReader::readString($data, 'name'));
+            $flagshipId = $resolve(JsonReader::readString($data, 'flagshipId'));
+            $shipIds = [$flagshipId, ...array_map($resolve, JsonReader::readStringList($data, 'otherShipsId'))];
 
             $formFleetCommand = new FormFleet(
                 $fleetId,

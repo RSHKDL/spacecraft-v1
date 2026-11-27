@@ -72,7 +72,12 @@ final readonly class DoctrineShipRepository implements ShipRepository, ShipFinde
             ->setParameter('id', $id)
         ;
 
-        return $qb->getQuery()->getOneOrNullResult();
+        $result = $qb->getQuery()->getOneOrNullResult();
+        if (null === $result || $result instanceof ShipView) {
+            return $result;
+        }
+
+        throw new \LogicException('Unexpected result other than ShipView or null');
     }
 
     private function shipQueryBuilder(): QueryBuilder

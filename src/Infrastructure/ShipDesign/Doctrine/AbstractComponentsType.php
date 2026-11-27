@@ -8,9 +8,11 @@ use App\Domain\Component\ComponentModelId;
 use App\Domain\Component\ComponentType;
 use App\Domain\Ship\ShipClass;
 use App\Domain\ShipDesign\Component;
+use App\Infrastructure\Json\JsonReader;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Exception\SerializationFailed;
+use Doctrine\DBAL\Types\Exception\ValueNotConvertible;
 use Doctrine\DBAL\Types\JsonbType;
 
 abstract class AbstractComponentsType extends JsonbType
@@ -68,15 +70,20 @@ abstract class AbstractComponentsType extends JsonbType
 
         $components = [];
 
-        foreach ($rows as $row) {
-            $type = ComponentType::from($row[self::KEY_TYPE]);
+        try {
+            foreach (JsonReader::readObjectList($rows) as $row) {
+                $type = ComponentType::from(JsonReader::readString($row, self::KEY_TYPE));
 
-            $components[] = Component::createFromStorage(
-                ComponentModelId::fromString($row[self::KEY_MODEL_ID]),
-                $type,
-                array_map(ShipClass::from(...), $row[self::KEY_SHIP_CLASSES]),
-                $type->powerOf($row[self::KEY_POWER]),
-            );
+                $components[] = Component::createFromStorage(
+                    ComponentModelId::fromString(JsonReader::readString($row, self::KEY_MODEL_ID)),
+                    $type,
+                    array_map(ShipClass::from(...), JsonReader::readStringList($row, self::KEY_SHIP_CLASSES)),
+                    $type->powerOf(JsonReader::readInt($row, self::KEY_POWER)),
+                );
+            }
+        } catch (\UnexpectedValueException $exception) {
+            // Doctrine's contract for a column it cannot hydrate.
+            throw ValueNotConvertible::new($value, static::class, $exception->getMessage(), $exception);
         }
 
         return $this->fromComponents($components);

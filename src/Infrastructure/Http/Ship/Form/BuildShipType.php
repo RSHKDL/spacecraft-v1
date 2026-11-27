@@ -27,6 +27,9 @@ final class BuildShipType extends AbstractType
             ->setAllowedTypes('designs', ShipDesignView::class . '[]');
     }
 
+    /**
+     * @param array{designs: list<ShipDesignView>} $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $designsById = $this->designsById($options['designs']);

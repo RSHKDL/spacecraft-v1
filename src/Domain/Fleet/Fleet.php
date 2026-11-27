@@ -85,6 +85,10 @@ final class Fleet
     public function detach(ShipId $shipId): void
     {
         $fleetAssignment = $this->findFleetAssignment($shipId);
+        if (null === $fleetAssignment) {
+            return;
+        }
+
         $this->fleetAssignments->removeElement($fleetAssignment);
 
         if ($this->flagshipId?->equals($shipId)) {

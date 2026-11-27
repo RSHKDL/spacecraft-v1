@@ -7,6 +7,7 @@ namespace App\Infrastructure\Http\Fleet;
 use App\Application\Query\QueryBus;
 use App\Application\Ship\Query\ListAvailableShips;
 use App\Application\Ship\Query\ShipView;
+use App\Infrastructure\Http\Fleet\Dto\FormFleet;
 use App\Infrastructure\Http\Fleet\Form\FormFleetType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -30,13 +31,13 @@ final class FormFleetController extends AbstractController
     #[Route('/fleets/new', name: 'fleet_form', methods: ['GET', 'POST'])]
     public function __invoke(Request $request): Response
     {
-        /** @var list<ShipView> $ships */
         $ships = $this->queryBus->ask(new ListAvailableShips());
-        $form = $this->createForm(FormFleetType::class, null, ['ships' => $ships]);
+        $dto = new FormFleet();
+        $form = $this->createForm(FormFleetType::class, $dto, ['ships' => $ships]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->commandBus->dispatch($form->getData()->toCommand());
+            $this->commandBus->dispatch($dto->toCommand());
 
             $this->addFlash('success', 'fleet.form.success');
 

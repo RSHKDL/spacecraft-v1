@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\Ship\Query;
 
-final class ListAvailableShips
-{
+use App\Application\Query\Query;
 
-}
+/**
+ * @implements Query<list<ShipView>>
+ */
+final readonly class ListAvailableShips implements Query {}

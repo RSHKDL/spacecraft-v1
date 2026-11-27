@@ -17,7 +17,16 @@ final class QueryBus
         $this->messageBus = $queryBus;
     }
 
-    public function ask(object $query): mixed
+    /**
+     * The handler's return type is not checked against TResult: integration
+     * tests cover that link. For information, the main goal of Template TResult
+     * is to pass PHPStan level 9, to be strict about explicit mixed type.
+     *
+     * @template TResult
+     * @param Query<TResult> $query
+     * @return TResult
+     */
+    public function ask(Query $query): mixed
     {
         return $this->handle($query);
     }

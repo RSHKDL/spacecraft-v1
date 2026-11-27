@@ -59,8 +59,8 @@ sass-watch: ## Recompile Sass on every change
 ## ----------------------------------------------------------------------------
 ##
 
-analyse: ## Run a PHPStan analysis
-	$(COMPOSE) exec app vendor/bin/phpstan analyse
+analyse: ## Run a PHPStan analysis (optional: LEVEL=X)
+	$(COMPOSE) exec app vendor/bin/phpstan analyse --error-format=table $(if $(LEVEL),--level=$(LEVEL))
 
 .PHONY: analyse
 

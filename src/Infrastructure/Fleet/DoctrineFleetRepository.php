@@ -79,6 +79,17 @@ final readonly class DoctrineFleetRepository implements FleetRepository, FleetFi
             return null;
         }
 
+        if (!is_array($fleet)) {
+            throw new \LogicException('Unexpected fleet format.');
+        }
+
+        $name = $fleet['name'] ?? null;
+        $flagshipId = $fleet['flagshipId'] ?? null;
+
+        if (!is_string($name) || !(null === $flagshipId || $flagshipId instanceof ShipId)) {
+            throw new \LogicException('Unexpected fleet row shape.');
+        }
+
         $qb = $this->entityManager->createQueryBuilder();
 
         $qb->select(sprintf('NEW %s(s.id, s.name, s.class, s.hull.current, s.hull.max)', FleetShipView::class))
@@ -92,8 +103,8 @@ final readonly class DoctrineFleetRepository implements FleetRepository, FleetFi
 
         return new FleetView(
             $id,
-            $fleet['name'],
-            $fleet['flagshipId'],
+            $name,
+            $flagshipId,
             $fleetShipViews
         );
     }

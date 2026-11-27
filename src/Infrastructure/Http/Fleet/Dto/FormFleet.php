@@ -30,11 +30,16 @@ final class FormFleet
 
     public function toCommand(): FormFleetCommand
     {
+        $name = $this->name
+            ?? throw new \LogicException('toCommand() requires a validated form: name is missing.');
+        $flagshipId = $this->flagshipId
+            ?? throw new \LogicException('toCommand() requires a validated form: flagship ID is missing.');
+
         return new FormFleetCommand(
             FleetId::generate(),
-            FleetName::create($this->name),
+            FleetName::create($name),
             array_map(ShipId::fromString(...), $this->shipIds),
-            ShipId::fromString($this->flagshipId)
+            ShipId::fromString($flagshipId)
         );
     }
 

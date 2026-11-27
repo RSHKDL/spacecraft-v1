@@ -28,6 +28,9 @@ final class FormFleetType extends AbstractType
         ;
     }
 
+    /**
+     * @param array{ships: list<ShipView>} $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $shipsById = $this->shipsById($options['ships']);

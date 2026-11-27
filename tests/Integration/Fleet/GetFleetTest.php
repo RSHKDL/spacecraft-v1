@@ -57,6 +57,7 @@ final class GetFleetTest extends IntegrationTestCase
             static fn (FleetShipView $ship): bool => $ship->id->equals($flagshipId),
         ));
 
+        self::assertNotFalse($flagshipView);
         self::assertSame(ShipClass::Cruiser, $flagshipView->class);
         self::assertNull($flagshipView->name);
         self::assertSame(HullStatus::Intact, $flagshipView->hullStatus);

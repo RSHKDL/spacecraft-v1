@@ -16,6 +16,8 @@ final class BuildShip
 
     public function toCommand(): BuildShipCommand
     {
-        return new BuildShipCommand(ShipId::generate(), ShipDesignId::fromString($this->designId));
+        $designId = $this->designId ?? throw new \LogicException('toCommand() requires a validated form: design ID is missing.');
+
+        return new BuildShipCommand(ShipId::generate(), ShipDesignId::fromString($designId));
     }
 }
